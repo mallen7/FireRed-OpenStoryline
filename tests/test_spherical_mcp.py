@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import tempfile
 import unittest
+from contextlib import ExitStack
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -61,10 +62,16 @@ class FakeRequest:
 class SphericalMCPRegistrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        with patch(
-            "open_storyline.nodes.core_nodes.split_shots.load_transnetv2_model_cached",
-            return_value=object(),
-        ):
+        asset_loading_initializers = (
+            "open_storyline.nodes.core_nodes.split_shots.SplitShotsNode.__init__",
+            "open_storyline.nodes.core_nodes.script_template_rec.ScriptTemplateRecomendation.__init__",
+            "open_storyline.nodes.core_nodes.select_bgm.SelectBGMNode.__init__",
+            "open_storyline.nodes.core_nodes.recommend_effects.RecommendTextNode.__init__",
+            "open_storyline.nodes.core_nodes.render_video.RenderVideoNode.__init__",
+        )
+        with ExitStack() as stack:
+            for initializer in asset_loading_initializers:
+                stack.enter_context(patch(initializer, return_value=None))
             disabled_cfg = load_settings("config.toml")
             cls.disabled_server = create_server(disabled_cfg)
             enabled_cfg = disabled_cfg.model_copy(deep=True)
