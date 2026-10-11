@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "1.0",
+      "pattern": "^1\\.0$",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "output_filename": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*\\.mp4$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Output Filename"
+    },
+    "sample_interval_seconds": {
+      "anyOf": [
+        {
+          "maximum": 5.0,
+          "minimum": 0.05,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sample Interval Seconds"
+    },
+    "use_cache": {
+      "default": true,
+      "title": "Use Cache",
+      "type": "boolean"
+    }
+  },
+  "title": "SphericalUiRenderRequest",
+  "type": "object"
+}

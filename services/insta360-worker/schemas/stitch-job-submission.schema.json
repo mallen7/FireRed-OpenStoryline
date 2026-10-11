@@ -1,0 +1,184 @@
+{
+  "$defs": {
+    "RetryPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "max_attempts": {
+          "default": 2,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "initial_delay_seconds": {
+          "default": 1.0,
+          "maximum": 300.0,
+          "minimum": 0.0,
+          "title": "Initial Delay Seconds",
+          "type": "number"
+        },
+        "maximum_delay_seconds": {
+          "default": 30.0,
+          "maximum": 900.0,
+          "minimum": 0.0,
+          "title": "Maximum Delay Seconds",
+          "type": "number"
+        }
+      },
+      "title": "RetryPolicy",
+      "type": "object"
+    },
+    "WorkerStitchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "job_id": {
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "input_paths": {
+          "items": {
+            "format": "path",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Input Paths",
+          "type": "array"
+        },
+        "output_path": {
+          "format": "path",
+          "title": "Output Path",
+          "type": "string"
+        },
+        "output_width": {
+          "default": 7680,
+          "exclusiveMinimum": 0,
+          "multipleOf": 2,
+          "title": "Output Width",
+          "type": "integer"
+        },
+        "output_height": {
+          "default": 3840,
+          "exclusiveMinimum": 0,
+          "multipleOf": 2,
+          "title": "Output Height",
+          "type": "integer"
+        },
+        "codec": {
+          "default": "h265",
+          "enum": [
+            "h264",
+            "h265"
+          ],
+          "title": "Codec",
+          "type": "string"
+        },
+        "bitrate_bps": {
+          "default": 120000000,
+          "exclusiveMinimum": 0,
+          "maximum": 1000000000,
+          "title": "Bitrate Bps",
+          "type": "integer"
+        },
+        "enable_flowstate": {
+          "default": true,
+          "title": "Enable Flowstate",
+          "type": "boolean"
+        },
+        "enable_direction_lock": {
+          "default": false,
+          "title": "Enable Direction Lock",
+          "type": "boolean"
+        },
+        "stitch_type": {
+          "default": "ai",
+          "enum": [
+            "template",
+            "optical_flow",
+            "dynamic",
+            "ai"
+          ],
+          "title": "Stitch Type",
+          "type": "string"
+        },
+        "enable_stitch_fusion": {
+          "default": true,
+          "title": "Enable Stitch Fusion",
+          "type": "boolean"
+        },
+        "model_root": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Root"
+        },
+        "overwrite": {
+          "default": false,
+          "title": "Overwrite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "job_id",
+        "input_paths",
+        "output_path"
+      ],
+      "title": "WorkerStitchRequest",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request": {
+      "$ref": "#/$defs/WorkerStitchRequest"
+    },
+    "timeout_seconds": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "maximum": 604800.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Timeout Seconds"
+    },
+    "retry_policy": {
+      "$ref": "#/$defs/RetryPolicy"
+    }
+  },
+  "required": [
+    "request"
+  ],
+  "title": "StitchJobSubmission",
+  "type": "object"
+}

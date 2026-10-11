@@ -1,0 +1,235 @@
+{
+  "$defs": {
+    "CodecSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "video_codec": {
+          "const": "libx264",
+          "default": "libx264",
+          "title": "Video Codec",
+          "type": "string"
+        },
+        "preset": {
+          "default": "medium",
+          "enum": [
+            "ultrafast",
+            "superfast",
+            "veryfast",
+            "faster",
+            "fast",
+            "medium",
+            "slow",
+            "slower",
+            "veryslow"
+          ],
+          "title": "Preset",
+          "type": "string"
+        },
+        "crf": {
+          "default": 18,
+          "maximum": 51,
+          "minimum": 0,
+          "title": "Crf",
+          "type": "integer"
+        },
+        "pixel_format": {
+          "const": "yuv420p",
+          "default": "yuv420p",
+          "title": "Pixel Format",
+          "type": "string"
+        },
+        "audio_codec": {
+          "const": "aac",
+          "default": "aac",
+          "title": "Audio Codec",
+          "type": "string"
+        },
+        "audio_bitrate": {
+          "default": "192k",
+          "pattern": "^[1-9][0-9]*k$",
+          "title": "Audio Bitrate",
+          "type": "string"
+        }
+      },
+      "title": "CodecSettings",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "render_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Render Key",
+      "type": "string"
+    },
+    "asset_id": {
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "track_id": {
+      "title": "Track Id",
+      "type": "string"
+    },
+    "source_hashes": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Hashes",
+      "type": "array"
+    },
+    "camera_track_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Camera Track Hash",
+      "type": "string"
+    },
+    "ffmpeg_version": {
+      "title": "Ffmpeg Version",
+      "type": "string"
+    },
+    "ffmpeg_capabilities": {
+      "additionalProperties": true,
+      "title": "Ffmpeg Capabilities",
+      "type": "object"
+    },
+    "exact_filter_graphs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exact Filter Graphs",
+      "type": "array"
+    },
+    "exact_commands": {
+      "items": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Exact Commands",
+      "type": "array"
+    },
+    "output_path": {
+      "format": "path",
+      "title": "Output Path",
+      "type": "string"
+    },
+    "output_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Output Hash",
+      "type": "string"
+    },
+    "render_duration_seconds": {
+      "minimum": 0,
+      "title": "Render Duration Seconds",
+      "type": "number"
+    },
+    "source_start_seconds": {
+      "minimum": 0,
+      "title": "Source Start Seconds",
+      "type": "number"
+    },
+    "source_end_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Source End Seconds",
+      "type": "number"
+    },
+    "output_width": {
+      "exclusiveMinimum": 0,
+      "title": "Output Width",
+      "type": "integer"
+    },
+    "output_height": {
+      "exclusiveMinimum": 0,
+      "title": "Output Height",
+      "type": "integer"
+    },
+    "output_fps": {
+      "exclusiveMinimum": 0,
+      "title": "Output Fps",
+      "type": "number"
+    },
+    "codec_settings": {
+      "$ref": "#/$defs/CodecSettings"
+    },
+    "hardware_acceleration": {
+      "additionalProperties": true,
+      "title": "Hardware Acceleration",
+      "type": "object"
+    },
+    "selected_backend": {
+      "title": "Selected Backend",
+      "type": "string"
+    },
+    "renderer_version": {
+      "title": "Renderer Version",
+      "type": "string"
+    },
+    "application_version": {
+      "title": "Application Version",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "fallback_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fallback Decisions",
+      "type": "array"
+    },
+    "audio_preserved": {
+      "title": "Audio Preserved",
+      "type": "boolean"
+    },
+    "cache_hit": {
+      "default": false,
+      "title": "Cache Hit",
+      "type": "boolean"
+    },
+    "creation_timestamp": {
+      "format": "date-time",
+      "title": "Creation Timestamp",
+      "type": "string"
+    }
+  },
+  "required": [
+    "render_key",
+    "asset_id",
+    "track_id",
+    "source_hashes",
+    "camera_track_hash",
+    "ffmpeg_version",
+    "ffmpeg_capabilities",
+    "exact_filter_graphs",
+    "exact_commands",
+    "output_path",
+    "output_hash",
+    "render_duration_seconds",
+    "source_start_seconds",
+    "source_end_seconds",
+    "output_width",
+    "output_height",
+    "output_fps",
+    "codec_settings",
+    "hardware_acceleration",
+    "selected_backend",
+    "renderer_version",
+    "application_version",
+    "audio_preserved"
+  ],
+  "title": "ReframeRenderManifest",
+  "type": "object"
+}

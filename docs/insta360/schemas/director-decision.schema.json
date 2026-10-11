@@ -1,0 +1,233 @@
+{
+  "$defs": {
+    "DirectorIntent": {
+      "enum": [
+        "speaker",
+        "reaction",
+        "establishing",
+        "hold",
+        "no_reliable_subject"
+      ],
+      "title": "DirectorIntent",
+      "type": "string"
+    },
+    "DirectorScoreComponents": {
+      "additionalProperties": false,
+      "properties": {
+        "semantic_relevance": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Semantic Relevance",
+          "type": "number"
+        },
+        "speaker_likelihood": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Speaker Likelihood",
+          "type": "number"
+        },
+        "visual_salience": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Visual Salience",
+          "type": "number"
+        },
+        "composition_quality": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Composition Quality",
+          "type": "number"
+        },
+        "continuity": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Continuity",
+          "type": "number"
+        },
+        "motion_cost": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Motion Cost",
+          "type": "number"
+        },
+        "cut_cost": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Cut Cost",
+          "type": "number"
+        },
+        "stitch_seam_penalty": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Stitch Seam Penalty",
+          "type": "number"
+        },
+        "nadir_penalty": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Nadir Penalty",
+          "type": "number"
+        },
+        "track_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Track Confidence",
+          "type": "number"
+        },
+        "repetition_penalty": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Repetition Penalty",
+          "type": "number"
+        }
+      },
+      "required": [
+        "semantic_relevance",
+        "speaker_likelihood",
+        "visual_salience",
+        "composition_quality",
+        "continuity",
+        "motion_cost",
+        "cut_cost",
+        "stitch_seam_penalty",
+        "nadir_penalty",
+        "track_confidence",
+        "repetition_penalty"
+      ],
+      "title": "DirectorScoreComponents",
+      "type": "object"
+    },
+    "DirectorTransition": {
+      "enum": [
+        "cut",
+        "pan",
+        "hold"
+      ],
+      "title": "DirectorTransition",
+      "type": "string"
+    },
+    "ShotSize": {
+      "enum": [
+        "close",
+        "medium",
+        "wide"
+      ],
+      "title": "ShotSize",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "decision_id": {
+      "minLength": 1,
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "start_seconds": {
+      "minimum": 0,
+      "title": "Start Seconds",
+      "type": "number"
+    },
+    "end_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "End Seconds",
+      "type": "number"
+    },
+    "intent": {
+      "$ref": "#/$defs/DirectorIntent"
+    },
+    "subject_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Id"
+    },
+    "alternative_subject_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Alternative Subject Ids",
+      "type": "array"
+    },
+    "shot_size": {
+      "$ref": "#/$defs/ShotSize"
+    },
+    "transition": {
+      "$ref": "#/$defs/DirectorTransition"
+    },
+    "yaw": {
+      "title": "Yaw",
+      "type": "number"
+    },
+    "pitch": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Pitch",
+      "type": "number"
+    },
+    "horizontal_fov": {
+      "exclusiveMaximum": 179.0,
+      "exclusiveMinimum": 1.0,
+      "title": "Horizontal Fov",
+      "type": "number"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "scores": {
+      "$ref": "#/$defs/DirectorScoreComponents"
+    },
+    "total_score": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Total Score",
+      "type": "number"
+    },
+    "rationale": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rationale",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision_id",
+    "start_seconds",
+    "end_seconds",
+    "intent",
+    "shot_size",
+    "transition",
+    "yaw",
+    "pitch",
+    "horizontal_fov",
+    "confidence",
+    "scores",
+    "total_score"
+  ],
+  "title": "DirectorDecision",
+  "type": "object"
+}

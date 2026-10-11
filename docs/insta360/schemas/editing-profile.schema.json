@@ -1,0 +1,174 @@
+{
+  "$defs": {
+    "VerticalOutputBehavior": {
+      "enum": [
+        "center_crop",
+        "active_subject",
+        "group_when_uncertain"
+      ],
+      "title": "VerticalOutputBehavior",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "display_name": {
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "preferred_shot_duration_min_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Preferred Shot Duration Min Seconds",
+      "type": "number"
+    },
+    "preferred_shot_duration_max_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Preferred Shot Duration Max Seconds",
+      "type": "number"
+    },
+    "close_fov_range": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Close Fov Range",
+      "type": "array"
+    },
+    "medium_fov_range": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Medium Fov Range",
+      "type": "array"
+    },
+    "wide_fov_range": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Wide Fov Range",
+      "type": "array"
+    },
+    "maximum_pan_speed_degrees_per_second": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Pan Speed Degrees Per Second",
+      "type": "number"
+    },
+    "speaker_following_strength": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Speaker Following Strength",
+      "type": "number"
+    },
+    "reaction_shot_frequency": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Reaction Shot Frequency",
+      "type": "number"
+    },
+    "establishing_shot_frequency": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Establishing Shot Frequency",
+      "type": "number"
+    },
+    "vertical_output_behavior": {
+      "$ref": "#/$defs/VerticalOutputBehavior"
+    },
+    "probable_speaker_threshold": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Probable Speaker Threshold",
+      "type": "number"
+    },
+    "minimum_track_confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Minimum Track Confidence",
+      "type": "number"
+    },
+    "avoid_nadir_below_pitch": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Avoid Nadir Below Pitch",
+      "type": "number"
+    },
+    "stitch_seam_yaws": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Stitch Seam Yaws",
+      "type": "array"
+    },
+    "stitch_seam_zone_width": {
+      "maximum": 90.0,
+      "minimum": 0.0,
+      "title": "Stitch Seam Zone Width",
+      "type": "number"
+    },
+    "music_handoff_behavior": {
+      "minLength": 1,
+      "title": "Music Handoff Behavior",
+      "type": "string"
+    },
+    "subtitle_handoff_behavior": {
+      "minLength": 1,
+      "title": "Subtitle Handoff Behavior",
+      "type": "string"
+    }
+  },
+  "required": [
+    "profile_id",
+    "display_name",
+    "preferred_shot_duration_min_seconds",
+    "preferred_shot_duration_max_seconds",
+    "close_fov_range",
+    "medium_fov_range",
+    "wide_fov_range",
+    "maximum_pan_speed_degrees_per_second",
+    "speaker_following_strength",
+    "reaction_shot_frequency",
+    "establishing_shot_frequency",
+    "vertical_output_behavior",
+    "probable_speaker_threshold",
+    "minimum_track_confidence",
+    "avoid_nadir_below_pitch",
+    "stitch_seam_zone_width",
+    "music_handoff_behavior",
+    "subtitle_handoff_behavior"
+  ],
+  "title": "EditingProfile",
+  "type": "object"
+}

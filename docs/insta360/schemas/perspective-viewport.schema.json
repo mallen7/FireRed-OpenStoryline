@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "viewport_id": {
+      "minLength": 1,
+      "title": "Viewport Id",
+      "type": "string"
+    },
+    "center_yaw": {
+      "title": "Center Yaw",
+      "type": "number"
+    },
+    "center_pitch": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Center Pitch",
+      "type": "number"
+    },
+    "horizontal_fov": {
+      "exclusiveMaximum": 179.0,
+      "exclusiveMinimum": 1.0,
+      "title": "Horizontal Fov",
+      "type": "number"
+    },
+    "vertical_fov": {
+      "exclusiveMaximum": 179.0,
+      "exclusiveMinimum": 1.0,
+      "title": "Vertical Fov",
+      "type": "number"
+    },
+    "width": {
+      "exclusiveMinimum": 0,
+      "multipleOf": 2,
+      "title": "Width",
+      "type": "integer"
+    },
+    "height": {
+      "exclusiveMinimum": 0,
+      "multipleOf": 2,
+      "title": "Height",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "viewport_id",
+    "center_yaw",
+    "center_pitch",
+    "horizontal_fov",
+    "vertical_fov",
+    "width",
+    "height"
+  ],
+  "title": "PerspectiveViewport",
+  "type": "object"
+}

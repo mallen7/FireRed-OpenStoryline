@@ -1,0 +1,44 @@
+services:
+  spherical-worker:
+    build:
+      context: ../..
+      dockerfile: services/insta360-worker/Dockerfile.http
+    image: openstoryline/insta360-worker-http:local
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${WORKER_BIND_ADDRESS:-127.0.0.1}:${WORKER_PORT:-8090}:8090"
+    environment:
+      OPENSTORYLINE_WORKER_TOKEN_FILE: /run/secrets/worker_token
+      OPENSTORYLINE_WORKER_STATE_DIR: /state
+      OPENSTORYLINE_WORKER_MEDIA_ROOTS: /media:/uploads
+      OPENSTORYLINE_WORKER_OUTPUT_ROOTS: /output
+      OPENSTORYLINE_WORKER_UPLOAD_ROOT: /uploads
+      OPENSTORYLINE_WORKER_EXECUTABLE: /usr/local/bin/insta360-worker
+      OPENSTORYLINE_WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-1}
+      OPENSTORYLINE_WORKER_MAX_QUEUED: ${WORKER_MAX_QUEUED:-100}
+      OPENSTORYLINE_WORKER_TIMEOUT_SECONDS: ${WORKER_TIMEOUT_SECONDS:-86400}
+      OPENSTORYLINE_WORKER_RETENTION_DAYS: ${WORKER_RETENTION_DAYS:-30}
+      INSTA360_MODEL_ROOT: ${INSTA360_MODEL_ROOT:-}
+    secrets:
+      - worker_token
+    volumes:
+      - ${WORKER_STATE_DIR:-./state}:/state
+      - ${WORKER_MEDIA_DIR:-/srv/openstoryline/media}:/media:ro
+      - ${WORKER_UPLOAD_DIR:-/srv/openstoryline/uploads}:/uploads
+      - ${WORKER_OUTPUT_DIR:-/srv/openstoryline/output}:/output
+      # A privately built SDK-enabled binary may replace the public stub:
+      # - /opt/private/insta360-worker:/usr/local/bin/insta360-worker:ro
+      # - /opt/private/insta360-models:/opt/insta360-models:ro
+    gpus: all
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:size=4g,mode=1777
+
+secrets:
+  worker_token:
+    file: ${OPENSTORYLINE_WORKER_TOKEN_FILE:?set OPENSTORYLINE_WORKER_TOKEN_FILE to a private token file}

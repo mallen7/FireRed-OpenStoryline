@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "event": {
+      "const": "error",
+      "default": "error",
+      "title": "Event",
+      "type": "string"
+    },
+    "code": {
+      "minLength": 1,
+      "pattern": "^[a-z0-9_]+$",
+      "title": "Code",
+      "type": "string"
+    },
+    "message": {
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "details": {
+      "additionalProperties": true,
+      "title": "Details",
+      "type": "object"
+    },
+    "retryable": {
+      "default": false,
+      "title": "Retryable",
+      "type": "boolean"
+    },
+    "job_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Job Id"
+    }
+  },
+  "required": [
+    "code",
+    "message"
+  ],
+  "title": "WorkerErrorResponse",
+  "type": "object"
+}

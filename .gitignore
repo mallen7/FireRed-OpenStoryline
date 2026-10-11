@@ -73,3 +73,23 @@ data/**
 !data/prompts/
 !data/prompts/**
 resource/**
+
+# Runtime UI assets populated by download.sh (not source assets)
+web/static/brand_black.png
+web/static/brand_white.png
+web/static/logo.png
+
+# Optional Insta360 extension: proprietary SDKs/models and generated media
+.storyline/insta360-sdk/
+.storyline/insta360-models/
+.storyline/spherical-cache/
+services/insta360-worker/build*/
+services/insta360-worker/local/
+services/insta360-worker/sdk/
+services/insta360-worker/vendor/insta360/
+services/insta360-worker/state/
+services/insta360-worker/deploy/*.token
+services/insta360-worker/deploy/*.secret
+tests/fixtures/generated/
+*.insv
+*.insp

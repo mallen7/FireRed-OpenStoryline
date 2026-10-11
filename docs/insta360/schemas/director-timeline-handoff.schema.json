@@ -1,0 +1,176 @@
+{
+  "$defs": {
+    "TimelineReferenceKind": {
+      "enum": [
+        "flat_source",
+        "spherical_approved_track",
+        "generated_reframe_artifact"
+      ],
+      "title": "TimelineReferenceKind",
+      "type": "string"
+    },
+    "TimelineSourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/TimelineReferenceKind"
+        },
+        "flat_path": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flat Path"
+        },
+        "spherical_asset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spherical Asset Id"
+        },
+        "approved_camera_track_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approved Camera Track Id"
+        },
+        "generated_reframe_path": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generated Reframe Path"
+        },
+        "render_manifest_path": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Render Manifest Path"
+        },
+        "render_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Render Hash"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "TimelineSourceReference",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "handoff_id": {
+      "minLength": 1,
+      "title": "Handoff Id",
+      "type": "string"
+    },
+    "proposal_id": {
+      "minLength": 1,
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "timeline_id": {
+      "minLength": 1,
+      "title": "Timeline Id",
+      "type": "string"
+    },
+    "source_reference": {
+      "$ref": "#/$defs/TimelineSourceReference"
+    },
+    "ordinary_media_id": {
+      "minLength": 1,
+      "title": "Ordinary Media Id",
+      "type": "string"
+    },
+    "ordinary_clip_id": {
+      "minLength": 1,
+      "title": "Ordinary Clip Id",
+      "type": "string"
+    },
+    "music_handoff_behavior": {
+      "minLength": 1,
+      "title": "Music Handoff Behavior",
+      "type": "string"
+    },
+    "subtitle_handoff_behavior": {
+      "minLength": 1,
+      "title": "Subtitle Handoff Behavior",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "handoff_id",
+    "proposal_id",
+    "timeline_id",
+    "source_reference",
+    "ordinary_media_id",
+    "ordinary_clip_id",
+    "music_handoff_behavior",
+    "subtitle_handoff_behavior"
+  ],
+  "title": "DirectorTimelineHandoff",
+  "type": "object"
+}

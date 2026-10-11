@@ -41,18 +41,61 @@ json_response = true       # 建议用 True / Recommended: True
 stateless_http = false     # 强烈建议用 False / Strongly recommended: False
 timeout = 600
 available_node_pkgs = [
-    "open_storyline.nodes.core_nodes"
+    "open_storyline.nodes.core_nodes",
+    "open_storyline.nodes.spherical_nodes"
 ]
 available_nodes = [
     "LoadMediaNode", "SearchMediaNode", "SplitShotsNode", "LocalASRNode", "SpeechRoughCutNode", "GenerateAITransitionNode", 
     "UnderstandClipsNode", "FilterClipsNode", "GroupClipsNode", "GenerateScriptNode", "ScriptTemplateRecomendation",
     "GenerateVoiceoverNode", "SelectBGMNode", "RecommendTransitionNode", "RecommendTextNode",
-    "PlanTimelineProNode", "PlanTimelineAITransitionNode", "RenderVideoNode"
+    "PlanTimelineProNode", "PlanTimelineAITransitionNode", "RenderVideoNode",
+    "ImportSphericalMediaNode", "InspectSphericalMediaNode",
+    "CreateVirtualCameraTrackNode", "UpdateVirtualCameraTrackNode",
+    "ValidateVirtualCameraTrackNode", "PreviewVirtualCameraTrackNode",
+    "RenderReframedClipNode", "ListVirtualCameraTracksNode",
+    "DeleteVirtualCameraTrackNode", "AnalyzeSphericalAssetNode",
+    "ListDetectedSubjectsNode", "InspectSubjectTrackNode",
+    "SuggestSubjectReframeNode", "SuggestGroupReframeNode",
+    "SuggestEstablishingShotNode", "PreviewReframeSuggestionNode",
+    "AcceptReframeSuggestionNode", "RejectReframeSuggestionNode",
+    "ListDirectorProfilesNode", "BuildSphericalStoryTimelineNode",
+    "AnalyzeSpeakerCandidatesNode", "GenerateDirectorProposalsNode",
+    "CompareDirectorProposalsNode", "PreviewDirectorProposalNode",
+    "AcceptDirectorProposalNode", "RejectDirectorProposalNode",
+    "RenderDirectorProposalNode"
 ]
 
 # =========== skills ==========
 [skills]
 skill_dir = "./.storyline/skills"
+
+# =========== optional spherical media support ===========
+[spherical]
+enabled = false
+enable_sdk_worker = false
+worker_transport = "local"
+worker_executable = "./services/insta360-worker/build/insta360-worker"
+worker_url = "http://127.0.0.1:8090"
+worker_token_env = "OPENSTORYLINE_WORKER_TOKEN"
+worker_verify_tls = true
+worker_timeout_seconds = 86400
+workspace_dir = "./outputs"
+cache_dir = "./.storyline/spherical-cache"
+renderer_sample_interval_seconds = 0.25
+proxy_width = 1024
+contact_sheet_thumbnail_width = 320
+preview_max_dimension = 640
+analysis_interval_seconds = 0.5
+analysis_max_frames = 120
+analysis_yaw_step_degrees = 60
+analysis_pitch_centers = [-45.0, 0.0, 45.0]
+analysis_horizontal_fov = 100.0
+analysis_view_width = 256
+analysis_view_height = 256
+analysis_minimum_detection_confidence = 0.25
+analysis_dedup_angular_threshold_degrees = 10.0
+analysis_max_track_angular_distance_degrees = 45.0
+analysis_max_occlusion_seconds = 1.5
 
 # =========== pexels ==========
 [search_media]

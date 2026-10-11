@@ -1,0 +1,698 @@
+{
+  "$defs": {
+    "CameraKeyframe": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "time_seconds": {
+          "minimum": 0,
+          "title": "Time Seconds",
+          "type": "number"
+        },
+        "yaw": {
+          "default": 0.0,
+          "title": "Yaw",
+          "type": "number"
+        },
+        "pitch": {
+          "default": 0.0,
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Pitch",
+          "type": "number"
+        },
+        "roll": {
+          "default": 0.0,
+          "title": "Roll",
+          "type": "number"
+        },
+        "horizontal_fov": {
+          "default": 90.0,
+          "exclusiveMaximum": 179.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Horizontal Fov",
+          "type": "number"
+        },
+        "easing": {
+          "$ref": "#/$defs/Easing",
+          "default": "linear"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Id"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        }
+      },
+      "required": [
+        "time_seconds"
+      ],
+      "title": "CameraKeyframe",
+      "type": "object"
+    },
+    "DirectorDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "decision_id": {
+          "minLength": 1,
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "intent": {
+          "$ref": "#/$defs/DirectorIntent"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Id"
+        },
+        "alternative_subject_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Alternative Subject Ids",
+          "type": "array"
+        },
+        "shot_size": {
+          "$ref": "#/$defs/ShotSize"
+        },
+        "transition": {
+          "$ref": "#/$defs/DirectorTransition"
+        },
+        "yaw": {
+          "title": "Yaw",
+          "type": "number"
+        },
+        "pitch": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Pitch",
+          "type": "number"
+        },
+        "horizontal_fov": {
+          "exclusiveMaximum": 179.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Horizontal Fov",
+          "type": "number"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "scores": {
+          "$ref": "#/$defs/DirectorScoreComponents"
+        },
+        "total_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Total Score",
+          "type": "number"
+        },
+        "rationale": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rationale",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "decision_id",
+        "start_seconds",
+        "end_seconds",
+        "intent",
+        "shot_size",
+        "transition",
+        "yaw",
+        "pitch",
+        "horizontal_fov",
+        "confidence",
+        "scores",
+        "total_score"
+      ],
+      "title": "DirectorDecision",
+      "type": "object"
+    },
+    "DirectorIntent": {
+      "enum": [
+        "speaker",
+        "reaction",
+        "establishing",
+        "hold",
+        "no_reliable_subject"
+      ],
+      "title": "DirectorIntent",
+      "type": "string"
+    },
+    "DirectorProposalStatus": {
+      "enum": [
+        "proposed",
+        "accepted",
+        "rejected"
+      ],
+      "title": "DirectorProposalStatus",
+      "type": "string"
+    },
+    "DirectorReviewArtifacts": {
+      "additionalProperties": false,
+      "properties": {
+        "camera_trajectory_json_path": {
+          "format": "path",
+          "title": "Camera Trajectory Json Path",
+          "type": "string"
+        },
+        "score_breakdown_json_path": {
+          "format": "path",
+          "title": "Score Breakdown Json Path",
+          "type": "string"
+        },
+        "hashes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Hashes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "camera_trajectory_json_path",
+        "score_breakdown_json_path",
+        "hashes"
+      ],
+      "title": "DirectorReviewArtifacts",
+      "type": "object"
+    },
+    "DirectorScoreComponents": {
+      "additionalProperties": false,
+      "properties": {
+        "semantic_relevance": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Semantic Relevance",
+          "type": "number"
+        },
+        "speaker_likelihood": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Speaker Likelihood",
+          "type": "number"
+        },
+        "visual_salience": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Visual Salience",
+          "type": "number"
+        },
+        "composition_quality": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Composition Quality",
+          "type": "number"
+        },
+        "continuity": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Continuity",
+          "type": "number"
+        },
+        "motion_cost": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Motion Cost",
+          "type": "number"
+        },
+        "cut_cost": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Cut Cost",
+          "type": "number"
+        },
+        "stitch_seam_penalty": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Stitch Seam Penalty",
+          "type": "number"
+        },
+        "nadir_penalty": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Nadir Penalty",
+          "type": "number"
+        },
+        "track_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Track Confidence",
+          "type": "number"
+        },
+        "repetition_penalty": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Repetition Penalty",
+          "type": "number"
+        }
+      },
+      "required": [
+        "semantic_relevance",
+        "speaker_likelihood",
+        "visual_salience",
+        "composition_quality",
+        "continuity",
+        "motion_cost",
+        "cut_cost",
+        "stitch_seam_penalty",
+        "nadir_penalty",
+        "track_confidence",
+        "repetition_penalty"
+      ],
+      "title": "DirectorScoreComponents",
+      "type": "object"
+    },
+    "DirectorTransition": {
+      "enum": [
+        "cut",
+        "pan",
+        "hold"
+      ],
+      "title": "DirectorTransition",
+      "type": "string"
+    },
+    "DirectorVariant": {
+      "enum": [
+        "speaker-focused",
+        "cinematic",
+        "minimal-motion",
+        "high-energy",
+        "vertical-social"
+      ],
+      "title": "DirectorVariant",
+      "type": "string"
+    },
+    "Easing": {
+      "enum": [
+        "linear",
+        "smoothstep",
+        "ease_in",
+        "ease_out",
+        "ease_in_out"
+      ],
+      "title": "Easing",
+      "type": "string"
+    },
+    "MotionConstraints": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "maximum_pan_speed_degrees_per_second": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Pan Speed Degrees Per Second",
+          "type": "number"
+        },
+        "maximum_acceleration_degrees_per_second_squared": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Acceleration Degrees Per Second Squared",
+          "type": "number"
+        },
+        "minimum_shot_duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Minimum Shot Duration Seconds",
+          "type": "number"
+        },
+        "maximum_shot_duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Shot Duration Seconds",
+          "type": "number"
+        },
+        "minimum_time_between_cuts_seconds": {
+          "minimum": 0,
+          "title": "Minimum Time Between Cuts Seconds",
+          "type": "number"
+        },
+        "maximum_fov_change_degrees_per_second": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Fov Change Degrees Per Second",
+          "type": "number"
+        },
+        "subject_dead_zone_degrees": {
+          "minimum": 0,
+          "title": "Subject Dead Zone Degrees",
+          "type": "number"
+        },
+        "maximum_low_confidence_tracking_seconds": {
+          "minimum": 0,
+          "title": "Maximum Low Confidence Tracking Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "maximum_pan_speed_degrees_per_second",
+        "maximum_acceleration_degrees_per_second_squared",
+        "minimum_shot_duration_seconds",
+        "maximum_shot_duration_seconds",
+        "minimum_time_between_cuts_seconds",
+        "maximum_fov_change_degrees_per_second",
+        "subject_dead_zone_degrees",
+        "maximum_low_confidence_tracking_seconds"
+      ],
+      "title": "MotionConstraints",
+      "type": "object"
+    },
+    "MotionValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "constraints_satisfied": {
+          "title": "Constraints Satisfied",
+          "type": "boolean"
+        },
+        "maximum_observed_pan_speed": {
+          "minimum": 0,
+          "title": "Maximum Observed Pan Speed",
+          "type": "number"
+        },
+        "maximum_observed_acceleration": {
+          "minimum": 0,
+          "title": "Maximum Observed Acceleration",
+          "type": "number"
+        },
+        "maximum_observed_fov_change_rate": {
+          "minimum": 0,
+          "title": "Maximum Observed Fov Change Rate",
+          "type": "number"
+        },
+        "minimum_observed_shot_duration": {
+          "minimum": 0,
+          "title": "Minimum Observed Shot Duration",
+          "type": "number"
+        },
+        "maximum_observed_shot_duration": {
+          "minimum": 0,
+          "title": "Maximum Observed Shot Duration",
+          "type": "number"
+        },
+        "cut_count": {
+          "minimum": 0,
+          "title": "Cut Count",
+          "type": "integer"
+        },
+        "pan_count": {
+          "minimum": 0,
+          "title": "Pan Count",
+          "type": "integer"
+        },
+        "forced_cut_count": {
+          "minimum": 0,
+          "title": "Forced Cut Count",
+          "type": "integer"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "constraints_satisfied",
+        "maximum_observed_pan_speed",
+        "maximum_observed_acceleration",
+        "maximum_observed_fov_change_rate",
+        "minimum_observed_shot_duration",
+        "maximum_observed_shot_duration",
+        "cut_count",
+        "pan_count",
+        "forced_cut_count"
+      ],
+      "title": "MotionValidationReport",
+      "type": "object"
+    },
+    "ShotSize": {
+      "enum": [
+        "close",
+        "medium",
+        "wide"
+      ],
+      "title": "ShotSize",
+      "type": "string"
+    },
+    "TrackCreatedBy": {
+      "enum": [
+        "manual",
+        "assisted",
+        "director"
+      ],
+      "title": "TrackCreatedBy",
+      "type": "string"
+    },
+    "VirtualCameraTrack": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "track_id": {
+          "minLength": 1,
+          "title": "Track Id",
+          "type": "string"
+        },
+        "asset_id": {
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "output_width": {
+          "exclusiveMinimum": 0,
+          "title": "Output Width",
+          "type": "integer"
+        },
+        "output_height": {
+          "exclusiveMinimum": 0,
+          "title": "Output Height",
+          "type": "integer"
+        },
+        "source_start_seconds": {
+          "minimum": 0,
+          "title": "Source Start Seconds",
+          "type": "number"
+        },
+        "source_end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Source End Seconds",
+          "type": "number"
+        },
+        "keyframes": {
+          "items": {
+            "$ref": "#/$defs/CameraKeyframe"
+          },
+          "minItems": 1,
+          "title": "Keyframes",
+          "type": "array"
+        },
+        "created_by": {
+          "$ref": "#/$defs/TrackCreatedBy",
+          "default": "manual"
+        },
+        "generation_metadata": {
+          "additionalProperties": true,
+          "title": "Generation Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "track_id",
+        "asset_id",
+        "name",
+        "output_width",
+        "output_height",
+        "source_start_seconds",
+        "source_end_seconds",
+        "keyframes"
+      ],
+      "title": "VirtualCameraTrack",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "proposal_id": {
+      "minLength": 1,
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "timeline_id": {
+      "minLength": 1,
+      "title": "Timeline Id",
+      "type": "string"
+    },
+    "speaker_analysis_id": {
+      "minLength": 1,
+      "title": "Speaker Analysis Id",
+      "type": "string"
+    },
+    "analysis_id": {
+      "minLength": 1,
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "asset_id": {
+      "minLength": 1,
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "variant": {
+      "$ref": "#/$defs/DirectorVariant"
+    },
+    "status": {
+      "$ref": "#/$defs/DirectorProposalStatus",
+      "default": "proposed"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/DirectorDecision"
+      },
+      "minItems": 1,
+      "title": "Decisions",
+      "type": "array"
+    },
+    "camera_track": {
+      "$ref": "#/$defs/VirtualCameraTrack"
+    },
+    "motion_constraints": {
+      "$ref": "#/$defs/MotionConstraints"
+    },
+    "motion_validation": {
+      "$ref": "#/$defs/MotionValidationReport"
+    },
+    "aggregate_score": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Aggregate Score",
+      "type": "number"
+    },
+    "review_artifacts": {
+      "$ref": "#/$defs/DirectorReviewArtifacts"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "timeline_id",
+    "speaker_analysis_id",
+    "analysis_id",
+    "asset_id",
+    "profile_id",
+    "variant",
+    "decisions",
+    "camera_track",
+    "motion_constraints",
+    "motion_validation",
+    "aggregate_score",
+    "review_artifacts"
+  ],
+  "title": "DirectorProposal",
+  "type": "object"
+}

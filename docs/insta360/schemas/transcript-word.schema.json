@@ -1,0 +1,66 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "word_id": {
+      "minLength": 1,
+      "title": "Word Id",
+      "type": "string"
+    },
+    "start_seconds": {
+      "minimum": 0,
+      "title": "Start Seconds",
+      "type": "number"
+    },
+    "end_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "End Seconds",
+      "type": "number"
+    },
+    "text": {
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confidence"
+    },
+    "clip_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Clip Id"
+    }
+  },
+  "required": [
+    "word_id",
+    "start_seconds",
+    "end_seconds",
+    "text"
+  ],
+  "title": "TranscriptWord",
+  "type": "object"
+}

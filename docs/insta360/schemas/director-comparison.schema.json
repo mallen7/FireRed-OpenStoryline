@@ -1,0 +1,149 @@
+{
+  "$defs": {
+    "DirectorVariant": {
+      "enum": [
+        "speaker-focused",
+        "cinematic",
+        "minimal-motion",
+        "high-energy",
+        "vertical-social"
+      ],
+      "title": "DirectorVariant",
+      "type": "string"
+    },
+    "ProposalComparisonItem": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "proposal_id": {
+          "minLength": 1,
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "variant": {
+          "$ref": "#/$defs/DirectorVariant"
+        },
+        "rank": {
+          "exclusiveMinimum": 0,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "aggregate_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Aggregate Score",
+          "type": "number"
+        },
+        "shot_count": {
+          "exclusiveMinimum": 0,
+          "title": "Shot Count",
+          "type": "integer"
+        },
+        "cut_count": {
+          "minimum": 0,
+          "title": "Cut Count",
+          "type": "integer"
+        },
+        "pan_count": {
+          "minimum": 0,
+          "title": "Pan Count",
+          "type": "integer"
+        },
+        "mean_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Mean Confidence",
+          "type": "number"
+        },
+        "strengths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Strengths",
+          "type": "array"
+        },
+        "tradeoffs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tradeoffs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "variant",
+        "rank",
+        "aggregate_score",
+        "shot_count",
+        "cut_count",
+        "pan_count",
+        "mean_confidence"
+      ],
+      "title": "ProposalComparisonItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "comparison_id": {
+      "minLength": 1,
+      "title": "Comparison Id",
+      "type": "string"
+    },
+    "timeline_id": {
+      "minLength": 1,
+      "title": "Timeline Id",
+      "type": "string"
+    },
+    "proposal_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "title": "Proposal Ids",
+      "type": "array"
+    },
+    "ranking": {
+      "items": {
+        "$ref": "#/$defs/ProposalComparisonItem"
+      },
+      "minItems": 2,
+      "title": "Ranking",
+      "type": "array"
+    },
+    "recommended_proposal_id": {
+      "minLength": 1,
+      "title": "Recommended Proposal Id",
+      "type": "string"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "comparison_id",
+    "timeline_id",
+    "proposal_ids",
+    "ranking",
+    "recommended_proposal_id",
+    "summary"
+  ],
+  "title": "DirectorComparison",
+  "type": "object"
+}

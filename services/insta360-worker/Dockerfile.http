@@ -1,0 +1,53 @@
+FROM ubuntu:22.04 AS worker-build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    cmake \
+    g++ \
+    libjson-c-dev \
+    ninja-build \
+    python3 \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+COPY services/insta360-worker/ /src/
+RUN cmake -S . -B build -G Ninja -DINSTA360_ENABLE_SDK=OFF -DBUILD_TESTING=ON \
+ && cmake --build build --parallel 2 \
+ && ctest --test-dir build --output-on-failure
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONPATH=/opt/openstoryline/src \
+    PYTHONUNBUFFERED=1 \
+    OPENSTORYLINE_WORKER_HOST=0.0.0.0 \
+    OPENSTORYLINE_WORKER_PORT=8090 \
+    OPENSTORYLINE_WORKER_EXECUTABLE=/usr/local/bin/insta360-worker
+
+# Ubuntu 22.04 ships Python 3.10, so use the latest compatible NumPy line.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    ffmpeg \
+    libjson-c5 \
+    python3 \
+    python3-pip \
+ && rm -rf /var/lib/apt/lists/* \
+ && python3 -m pip install --no-cache-dir \
+    "fastapi==0.128.0" \
+    "httpx==0.28.1" \
+    "numpy==2.2.6" \
+    "Pillow==11.3.0" \
+    "pydantic>=2.10,<3" \
+    "uvicorn[standard]==0.40.0"
+
+COPY --from=worker-build /src/build/insta360-worker /usr/local/bin/insta360-worker
+COPY src/open_storyline/ /opt/openstoryline/src/open_storyline/
+
+RUN useradd --system --uid 10001 --home-dir /nonexistent --shell /usr/sbin/nologin storyline \
+ && mkdir -p /state /media /uploads /output \
+ && chown -R storyline:storyline /state /uploads /output
+
+USER storyline
+EXPOSE 8090
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD ["python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health/live', timeout=3).read()"]
+ENTRYPOINT ["python3", "-m", "open_storyline.spherical.worker_service", "serve"]

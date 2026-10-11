@@ -1,0 +1,653 @@
+{
+  "$defs": {
+    "AnalysisBackendInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "object_detector": {
+          "title": "Object Detector",
+          "type": "string"
+        },
+        "person_detector": {
+          "title": "Person Detector",
+          "type": "string"
+        },
+        "face_detector": {
+          "title": "Face Detector",
+          "type": "string"
+        },
+        "subject_tracker": {
+          "title": "Subject Tracker",
+          "type": "string"
+        },
+        "shot_boundary_detector": {
+          "title": "Shot Boundary Detector",
+          "type": "string"
+        },
+        "visual_embedder": {
+          "title": "Visual Embedder",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "optional_dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Optional Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "object_detector",
+        "person_detector",
+        "face_detector",
+        "subject_tracker",
+        "shot_boundary_detector",
+        "visual_embedder"
+      ],
+      "title": "AnalysisBackendInfo",
+      "type": "object"
+    },
+    "AnalysisReviewArtifacts": {
+      "additionalProperties": false,
+      "properties": {
+        "detection_overlay_clip_path": {
+          "format": "path",
+          "title": "Detection Overlay Clip Path",
+          "type": "string"
+        },
+        "detection_contact_sheet_path": {
+          "format": "path",
+          "title": "Detection Contact Sheet Path",
+          "type": "string"
+        },
+        "subject_trajectory_json_path": {
+          "format": "path",
+          "title": "Subject Trajectory Json Path",
+          "type": "string"
+        },
+        "analysis_manifest_path": {
+          "format": "path",
+          "title": "Analysis Manifest Path",
+          "type": "string"
+        },
+        "hashes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Hashes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "detection_overlay_clip_path",
+        "detection_contact_sheet_path",
+        "subject_trajectory_json_path",
+        "analysis_manifest_path",
+        "hashes"
+      ],
+      "title": "AnalysisReviewArtifacts",
+      "type": "object"
+    },
+    "DetectionKind": {
+      "enum": [
+        "object",
+        "person",
+        "face"
+      ],
+      "title": "DetectionKind",
+      "type": "string"
+    },
+    "OcclusionGap": {
+      "additionalProperties": false,
+      "properties": {
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "minimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "duration_seconds": {
+          "minimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "start_seconds",
+        "end_seconds",
+        "duration_seconds"
+      ],
+      "title": "OcclusionGap",
+      "type": "object"
+    },
+    "PerspectiveFrame": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "timestamp_seconds": {
+          "minimum": 0,
+          "title": "Timestamp Seconds",
+          "type": "number"
+        },
+        "viewport": {
+          "$ref": "#/$defs/PerspectiveViewport"
+        },
+        "image_path": {
+          "format": "path",
+          "title": "Image Path",
+          "type": "string"
+        },
+        "image_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Image Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "timestamp_seconds",
+        "viewport",
+        "image_path",
+        "image_sha256"
+      ],
+      "title": "PerspectiveFrame",
+      "type": "object"
+    },
+    "PerspectiveViewport": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "viewport_id": {
+          "minLength": 1,
+          "title": "Viewport Id",
+          "type": "string"
+        },
+        "center_yaw": {
+          "title": "Center Yaw",
+          "type": "number"
+        },
+        "center_pitch": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Center Pitch",
+          "type": "number"
+        },
+        "horizontal_fov": {
+          "exclusiveMaximum": 179.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Horizontal Fov",
+          "type": "number"
+        },
+        "vertical_fov": {
+          "exclusiveMaximum": 179.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Vertical Fov",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "multipleOf": 2,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "multipleOf": 2,
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "viewport_id",
+        "center_yaw",
+        "center_pitch",
+        "horizontal_fov",
+        "vertical_fov",
+        "width",
+        "height"
+      ],
+      "title": "PerspectiveViewport",
+      "type": "object"
+    },
+    "SeamCrossingEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "timestamp_seconds": {
+          "minimum": 0,
+          "title": "Timestamp Seconds",
+          "type": "number"
+        },
+        "from_yaw": {
+          "title": "From Yaw",
+          "type": "number"
+        },
+        "to_yaw": {
+          "title": "To Yaw",
+          "type": "number"
+        }
+      },
+      "required": [
+        "timestamp_seconds",
+        "from_yaw",
+        "to_yaw"
+      ],
+      "title": "SeamCrossingEvent",
+      "type": "object"
+    },
+    "SphericalDetection": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "detection_id": {
+          "minLength": 1,
+          "title": "Detection Id",
+          "type": "string"
+        },
+        "timestamp_seconds": {
+          "minimum": 0,
+          "title": "Timestamp Seconds",
+          "type": "number"
+        },
+        "yaw": {
+          "title": "Yaw",
+          "type": "number"
+        },
+        "pitch": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Pitch",
+          "type": "number"
+        },
+        "angular_width": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 180.0,
+          "title": "Angular Width",
+          "type": "number"
+        },
+        "angular_height": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 180.0,
+          "title": "Angular Height",
+          "type": "number"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "kinds": {
+          "items": {
+            "$ref": "#/$defs/DetectionKind"
+          },
+          "minItems": 1,
+          "title": "Kinds",
+          "type": "array"
+        },
+        "labels": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Labels",
+          "type": "array"
+        },
+        "source_viewports": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Viewports",
+          "type": "array"
+        },
+        "detector_backends": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Detector Backends",
+          "type": "array"
+        },
+        "embedding": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 512,
+          "title": "Embedding",
+          "type": "array"
+        },
+        "identity_evidence": {
+          "additionalProperties": true,
+          "title": "Identity Evidence",
+          "type": "object"
+        }
+      },
+      "required": [
+        "detection_id",
+        "timestamp_seconds",
+        "yaw",
+        "pitch",
+        "angular_width",
+        "angular_height",
+        "confidence",
+        "kinds",
+        "labels",
+        "source_viewports",
+        "detector_backends"
+      ],
+      "title": "SphericalDetection",
+      "type": "object"
+    },
+    "SubjectSample": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "timestamp_seconds": {
+          "minimum": 0,
+          "title": "Timestamp Seconds",
+          "type": "number"
+        },
+        "yaw": {
+          "title": "Yaw",
+          "type": "number"
+        },
+        "pitch": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Pitch",
+          "type": "number"
+        },
+        "angular_width": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 180.0,
+          "title": "Angular Width",
+          "type": "number"
+        },
+        "angular_height": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 180.0,
+          "title": "Angular Height",
+          "type": "number"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "visibility": {
+          "$ref": "#/$defs/VisibilityState"
+        },
+        "source_viewports": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Viewports",
+          "type": "array"
+        },
+        "identity_evidence": {
+          "additionalProperties": true,
+          "title": "Identity Evidence",
+          "type": "object"
+        }
+      },
+      "required": [
+        "timestamp_seconds",
+        "yaw",
+        "pitch",
+        "angular_width",
+        "angular_height",
+        "confidence",
+        "visibility"
+      ],
+      "title": "SubjectSample",
+      "type": "object"
+    },
+    "SubjectTrack": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "subject_id": {
+          "minLength": 1,
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "asset_id": {
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "minimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "samples": {
+          "items": {
+            "$ref": "#/$defs/SubjectSample"
+          },
+          "minItems": 1,
+          "title": "Samples",
+          "type": "array"
+        },
+        "mean_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Mean Confidence",
+          "type": "number"
+        },
+        "identity_evidence": {
+          "additionalProperties": true,
+          "title": "Identity Evidence",
+          "type": "object"
+        },
+        "occlusion_gaps": {
+          "items": {
+            "$ref": "#/$defs/OcclusionGap"
+          },
+          "title": "Occlusion Gaps",
+          "type": "array"
+        },
+        "seam_crossing_events": {
+          "items": {
+            "$ref": "#/$defs/SeamCrossingEvent"
+          },
+          "title": "Seam Crossing Events",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject_id",
+        "asset_id",
+        "start_seconds",
+        "end_seconds",
+        "samples",
+        "mean_confidence"
+      ],
+      "title": "SubjectTrack",
+      "type": "object"
+    },
+    "VisibilityState": {
+      "enum": [
+        "visible",
+        "occluded",
+        "lost"
+      ],
+      "title": "VisibilityState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "analysis_id": {
+      "minLength": 1,
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "asset_id": {
+      "minLength": 1,
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "cache_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Cache Key",
+      "type": "string"
+    },
+    "cache_hit": {
+      "default": false,
+      "title": "Cache Hit",
+      "type": "boolean"
+    },
+    "sample_timestamps": {
+      "items": {
+        "type": "number"
+      },
+      "minItems": 1,
+      "title": "Sample Timestamps",
+      "type": "array"
+    },
+    "perspective_frames": {
+      "items": {
+        "$ref": "#/$defs/PerspectiveFrame"
+      },
+      "minItems": 1,
+      "title": "Perspective Frames",
+      "type": "array"
+    },
+    "spherical_detections": {
+      "items": {
+        "$ref": "#/$defs/SphericalDetection"
+      },
+      "title": "Spherical Detections",
+      "type": "array"
+    },
+    "subject_tracks": {
+      "items": {
+        "$ref": "#/$defs/SubjectTrack"
+      },
+      "title": "Subject Tracks",
+      "type": "array"
+    },
+    "shot_boundaries_seconds": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Shot Boundaries Seconds",
+      "type": "array"
+    },
+    "backend": {
+      "$ref": "#/$defs/AnalysisBackendInfo"
+    },
+    "confidence_summary": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Confidence Summary",
+      "type": "object"
+    },
+    "review_artifacts": {
+      "$ref": "#/$defs/AnalysisReviewArtifacts"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "analysis_id",
+    "asset_id",
+    "source_sha256",
+    "cache_key",
+    "sample_timestamps",
+    "perspective_frames",
+    "spherical_detections",
+    "subject_tracks",
+    "backend",
+    "confidence_summary",
+    "review_artifacts"
+  ],
+  "title": "SphericalAnalysis",
+  "type": "object"
+}

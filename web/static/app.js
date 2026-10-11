@@ -1,4 +1,6 @@
 // /static/app.js
+import { SphericalWorkspace } from "./spherical_workspace.js";
+
 const $ = (sel) => document.querySelector(sel);
 const SIDEBAR_COLLAPSED_KEY = "openstoryline_sidebar_collapsed";
 const DEVBAR_COLLAPSED_KEY = "openstoryline_devbar_collapsed";
@@ -2448,6 +2450,7 @@ class App {
 
     this.fileInput = $("#fileInput");
     this.uploadBtn = $("#uploadBtn");
+    this.sphericalWorkspaceBtn = $("#sphericalWorkspaceBtn");
     this.promptInput = $("#promptInput");
     this.sendBtn = $("#sendBtn");
     this.quickPromptBtn = $("#quickPromptBtn");
@@ -2483,6 +2486,11 @@ class App {
     this.lang = __osNormLang(window.OPENSTORYLINE_LANG || "zh");
 
     this._langWasStored = (__osLoadLang() != null);
+
+    this.sphericalWorkspace = new SphericalWorkspace({
+      getSessionId: () => this.sessionId,
+      getLanguage: () => this.lang,
+    });
 
   }
 
@@ -3274,6 +3282,7 @@ class App {
     __applyLang(v, { persist });
 
     this.lang = v;
+    this.sphericalWorkspace?.setLanguage(v);
     if (persist) this._langWasStored = true;
 
     if (this.langToggle) this.langToggle.checked = (v === "en");
@@ -3732,6 +3741,12 @@ class App {
       });
     }
 
+    if (this.sphericalWorkspaceBtn) {
+      this.sphericalWorkspaceBtn.addEventListener("click", () => {
+        this.sphericalWorkspace.open();
+      });
+    }
+
     // 拖拽上传：允许用户把文件拖到整个页面
     // 仅对“文件拖拽”拦截，避免影响文本拖动等其他行为
     const rootEl = document.body || document.documentElement;
@@ -4037,6 +4052,7 @@ class App {
     this._updateComposerDisabledState();
 
     this.sessionId = sessionId;
+    this.sphericalWorkspace?.setSession(sessionId);
 
     const snapLang = snapshot && snapshot.lang;
     if (!this._langWasStored && snapLang) {

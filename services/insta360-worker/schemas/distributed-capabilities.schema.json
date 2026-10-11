@@ -1,0 +1,236 @@
+{
+  "$defs": {
+    "WorkerCapabilityResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "worker_version": {
+          "minLength": 1,
+          "title": "Worker Version",
+          "type": "string"
+        },
+        "provider": {
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "sdk_enabled": {
+          "title": "Sdk Enabled",
+          "type": "boolean"
+        },
+        "sdk_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sdk Version"
+        },
+        "can_decode_insv": {
+          "title": "Can Decode Insv",
+          "type": "boolean"
+        },
+        "can_stitch": {
+          "title": "Can Stitch",
+          "type": "boolean"
+        },
+        "supports_progress": {
+          "title": "Supports Progress",
+          "type": "boolean"
+        },
+        "supports_cancellation": {
+          "title": "Supports Cancellation",
+          "type": "boolean"
+        },
+        "supported_codecs": {
+          "items": {
+            "enum": [
+              "h264",
+              "h265"
+            ],
+            "type": "string"
+          },
+          "title": "Supported Codecs",
+          "type": "array"
+        },
+        "supported_stitch_types": {
+          "items": {
+            "enum": [
+              "template",
+              "optical_flow",
+              "dynamic",
+              "ai"
+            ],
+            "type": "string"
+          },
+          "title": "Supported Stitch Types",
+          "type": "array"
+        },
+        "max_input_files": {
+          "minimum": 1,
+          "title": "Max Input Files",
+          "type": "integer"
+        },
+        "requires_gpu": {
+          "title": "Requires Gpu",
+          "type": "boolean"
+        },
+        "target_platform": {
+          "title": "Target Platform",
+          "type": "string"
+        },
+        "model_root_configured": {
+          "title": "Model Root Configured",
+          "type": "boolean"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "worker_version",
+        "provider",
+        "sdk_enabled",
+        "can_decode_insv",
+        "can_stitch",
+        "supports_progress",
+        "supports_cancellation",
+        "supported_codecs",
+        "supported_stitch_types",
+        "max_input_files",
+        "requires_gpu",
+        "target_platform",
+        "model_root_configured"
+      ],
+      "title": "WorkerCapabilityResponse",
+      "type": "object"
+    },
+    "WorkerJobOperation": {
+      "enum": [
+        "stitch",
+        "reframe",
+        "analyze"
+      ],
+      "title": "WorkerJobOperation",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "api_version": {
+      "default": "1.0",
+      "title": "Api Version",
+      "type": "string"
+    },
+    "worker_version": {
+      "minLength": 1,
+      "title": "Worker Version",
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/WorkerJobOperation"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "authentication": {
+      "const": "bearer",
+      "default": "bearer",
+      "title": "Authentication",
+      "type": "string"
+    },
+    "event_transport": {
+      "const": "server-sent-events",
+      "default": "server-sent-events",
+      "title": "Event Transport",
+      "type": "string"
+    },
+    "shared_storage_supported": {
+      "default": true,
+      "title": "Shared Storage Supported",
+      "type": "boolean"
+    },
+    "http_upload_supported": {
+      "title": "Http Upload Supported",
+      "type": "boolean"
+    },
+    "max_request_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Max Request Bytes",
+      "type": "integer"
+    },
+    "max_upload_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Max Upload Bytes",
+      "type": "integer"
+    },
+    "max_concurrent_jobs": {
+      "exclusiveMinimum": 0,
+      "title": "Max Concurrent Jobs",
+      "type": "integer"
+    },
+    "max_queued_jobs": {
+      "exclusiveMinimum": 0,
+      "title": "Max Queued Jobs",
+      "type": "integer"
+    },
+    "stitch": {
+      "$ref": "#/$defs/WorkerCapabilityResponse"
+    },
+    "diagnostics_summary": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Diagnostics Summary",
+      "type": "object"
+    }
+  },
+  "required": [
+    "worker_version",
+    "operations",
+    "http_upload_supported",
+    "max_request_bytes",
+    "max_upload_bytes",
+    "max_concurrent_jobs",
+    "max_queued_jobs",
+    "stitch"
+  ],
+  "title": "DistributedWorkerCapabilities",
+  "type": "object"
+}

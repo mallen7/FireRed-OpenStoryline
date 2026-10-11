@@ -1,0 +1,4 @@
+interface:
+  display_name: "Insta360 Editing Workflow"
+  short_description: "Safely ingest, direct, and render 360 video"
+  default_prompt: "Edit Insta360 footage through the local or authenticated distributed spherical workflow, using inspectable storyline-aware proposals and explicit approval before rendering flat media."

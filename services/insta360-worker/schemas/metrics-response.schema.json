@@ -1,0 +1,119 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "worker_version": {
+      "minLength": 1,
+      "title": "Worker Version",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "job_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Job Counts",
+      "type": "object"
+    },
+    "operation_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Operation Counts",
+      "type": "object"
+    },
+    "failure_types": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Failure Types",
+      "type": "object"
+    },
+    "average_job_duration_seconds": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Average Job Duration Seconds",
+      "type": "object"
+    },
+    "stitch_fps": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stitch Fps"
+    },
+    "reframe_fps": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reframe Fps"
+    },
+    "cache_hit_rate": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Cache Hit Rate",
+      "type": "number"
+    },
+    "output_bytes": {
+      "minimum": 0,
+      "title": "Output Bytes",
+      "type": "integer"
+    },
+    "gpu_available": {
+      "title": "Gpu Available",
+      "type": "boolean"
+    },
+    "gpu_memory_used_bytes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gpu Memory Used Bytes"
+    },
+    "sdk_capability": {
+      "additionalProperties": true,
+      "title": "Sdk Capability",
+      "type": "object"
+    }
+  },
+  "required": [
+    "worker_version",
+    "job_counts",
+    "operation_counts",
+    "failure_types",
+    "average_job_duration_seconds",
+    "cache_hit_rate",
+    "output_bytes",
+    "gpu_available",
+    "sdk_capability"
+  ],
+  "title": "WorkerMetricsResponse",
+  "type": "object"
+}

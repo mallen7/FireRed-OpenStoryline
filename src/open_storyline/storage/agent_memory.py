@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Any, List, Optional, Tuple
+from typing import Any, Iterable, List, Optional, Tuple
 import json
 import time
 
@@ -150,3 +150,23 @@ class ArtifactStore:
         if not candidates:
             return None
         return max(candidates, key=lambda m: m.created_at)
+
+    def list_meta(
+        self,
+        *,
+        node_ids: Optional[Iterable[str]] = None,
+    ) -> List[ArtifactMeta]:
+        """Return this session's artifact metadata in creation order.
+
+        Nodes that model revision history can reconstruct state through the
+        existing artifact log without accessing private storage internals.
+        """
+
+        allowed = set(node_ids) if node_ids is not None else None
+        metas = [
+            meta
+            for meta in self._load_meta_list()
+            if meta.session_id == self.session_id
+            and (allowed is None or meta.node_id in allowed)
+        ]
+        return sorted(metas, key=lambda meta: meta.created_at)

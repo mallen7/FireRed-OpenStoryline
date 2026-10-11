@@ -1,0 +1,451 @@
+{
+  "$defs": {
+    "CameraKeyframe": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "time_seconds": {
+          "minimum": 0,
+          "title": "Time Seconds",
+          "type": "number"
+        },
+        "yaw": {
+          "default": 0.0,
+          "title": "Yaw",
+          "type": "number"
+        },
+        "pitch": {
+          "default": 0.0,
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Pitch",
+          "type": "number"
+        },
+        "roll": {
+          "default": 0.0,
+          "title": "Roll",
+          "type": "number"
+        },
+        "horizontal_fov": {
+          "default": 90.0,
+          "exclusiveMaximum": 179.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Horizontal Fov",
+          "type": "number"
+        },
+        "easing": {
+          "$ref": "#/$defs/Easing",
+          "default": "linear"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Id"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        }
+      },
+      "required": [
+        "time_seconds"
+      ],
+      "title": "CameraKeyframe",
+      "type": "object"
+    },
+    "CodecSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "video_codec": {
+          "const": "libx264",
+          "default": "libx264",
+          "title": "Video Codec",
+          "type": "string"
+        },
+        "preset": {
+          "default": "medium",
+          "enum": [
+            "ultrafast",
+            "superfast",
+            "veryfast",
+            "faster",
+            "fast",
+            "medium",
+            "slow",
+            "slower",
+            "veryslow"
+          ],
+          "title": "Preset",
+          "type": "string"
+        },
+        "crf": {
+          "default": 18,
+          "maximum": 51,
+          "minimum": 0,
+          "title": "Crf",
+          "type": "integer"
+        },
+        "pixel_format": {
+          "const": "yuv420p",
+          "default": "yuv420p",
+          "title": "Pixel Format",
+          "type": "string"
+        },
+        "audio_codec": {
+          "const": "aac",
+          "default": "aac",
+          "title": "Audio Codec",
+          "type": "string"
+        },
+        "audio_bitrate": {
+          "default": "192k",
+          "pattern": "^[1-9][0-9]*k$",
+          "title": "Audio Bitrate",
+          "type": "string"
+        }
+      },
+      "title": "CodecSettings",
+      "type": "object"
+    },
+    "Easing": {
+      "enum": [
+        "linear",
+        "smoothstep",
+        "ease_in",
+        "ease_out",
+        "ease_in_out"
+      ],
+      "title": "Easing",
+      "type": "string"
+    },
+    "IngestMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "default": "studio-export",
+          "title": "Provider",
+          "type": "string"
+        },
+        "stabilization": {
+          "default": "unknown",
+          "title": "Stabilization",
+          "type": "string"
+        },
+        "stitch_type": {
+          "default": "unknown",
+          "title": "Stitch Type",
+          "type": "string"
+        }
+      },
+      "title": "IngestMetadata",
+      "type": "object"
+    },
+    "Projection": {
+      "enum": [
+        "equirectangular"
+      ],
+      "title": "Projection",
+      "type": "string"
+    },
+    "SourceType": {
+      "enum": [
+        "equirectangular"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "SphericalAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "asset_id": {
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType",
+          "default": "equirectangular"
+        },
+        "source_paths": {
+          "items": {
+            "format": "path",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        },
+        "source_hashes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Hashes",
+          "type": "array"
+        },
+        "camera_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Camera Model"
+        },
+        "projection": {
+          "$ref": "#/$defs/Projection",
+          "default": "equirectangular"
+        },
+        "master_path": {
+          "format": "path",
+          "title": "Master Path",
+          "type": "string"
+        },
+        "proxy_path": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy Path"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "integer"
+        },
+        "fps": {
+          "exclusiveMinimum": 0,
+          "title": "Fps",
+          "type": "number"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "audio_stream_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audio Stream Index"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "ingest": {
+          "$ref": "#/$defs/IngestMetadata"
+        }
+      },
+      "required": [
+        "asset_id",
+        "source_paths",
+        "source_hashes",
+        "master_path",
+        "width",
+        "height",
+        "fps",
+        "duration_seconds"
+      ],
+      "title": "SphericalAsset",
+      "type": "object"
+    },
+    "TrackCreatedBy": {
+      "enum": [
+        "manual",
+        "assisted",
+        "director"
+      ],
+      "title": "TrackCreatedBy",
+      "type": "string"
+    },
+    "VirtualCameraTrack": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "track_id": {
+          "minLength": 1,
+          "title": "Track Id",
+          "type": "string"
+        },
+        "asset_id": {
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "output_width": {
+          "exclusiveMinimum": 0,
+          "title": "Output Width",
+          "type": "integer"
+        },
+        "output_height": {
+          "exclusiveMinimum": 0,
+          "title": "Output Height",
+          "type": "integer"
+        },
+        "source_start_seconds": {
+          "minimum": 0,
+          "title": "Source Start Seconds",
+          "type": "number"
+        },
+        "source_end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Source End Seconds",
+          "type": "number"
+        },
+        "keyframes": {
+          "items": {
+            "$ref": "#/$defs/CameraKeyframe"
+          },
+          "minItems": 1,
+          "title": "Keyframes",
+          "type": "array"
+        },
+        "created_by": {
+          "$ref": "#/$defs/TrackCreatedBy",
+          "default": "manual"
+        },
+        "generation_metadata": {
+          "additionalProperties": true,
+          "title": "Generation Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "track_id",
+        "asset_id",
+        "name",
+        "output_width",
+        "output_height",
+        "source_start_seconds",
+        "source_end_seconds",
+        "keyframes"
+      ],
+      "title": "VirtualCameraTrack",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "asset": {
+      "$ref": "#/$defs/SphericalAsset"
+    },
+    "track": {
+      "$ref": "#/$defs/VirtualCameraTrack"
+    },
+    "output_path": {
+      "format": "path",
+      "title": "Output Path",
+      "type": "string"
+    },
+    "workspace_root": {
+      "format": "path",
+      "title": "Workspace Root",
+      "type": "string"
+    },
+    "cache_dir": {
+      "format": "path",
+      "title": "Cache Dir",
+      "type": "string"
+    },
+    "codec_settings": {
+      "$ref": "#/$defs/CodecSettings"
+    },
+    "sample_interval_seconds": {
+      "default": 0.25,
+      "maximum": 5.0,
+      "minimum": 0.05,
+      "title": "Sample Interval Seconds",
+      "type": "number"
+    },
+    "use_cache": {
+      "default": true,
+      "title": "Use Cache",
+      "type": "boolean"
+    },
+    "overwrite": {
+      "default": false,
+      "title": "Overwrite",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "asset",
+    "track",
+    "output_path",
+    "workspace_root",
+    "cache_dir"
+  ],
+  "title": "ReframeRenderRequest",
+  "type": "object"
+}

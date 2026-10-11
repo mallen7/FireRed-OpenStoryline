@@ -106,6 +106,17 @@ class ToolInterceptor:
             if node_id == 'load_media':
                 input_data['inputs'] = []
                 seen_paths: set = set()
+                spherical_master_paths: set[str] = set()
+                for import_meta in store.list_meta(node_ids={"import_spherical_media"}):
+                    _, import_data = store.load_result(import_meta.artifact_id)
+                    if not isinstance(import_data, dict):
+                        continue
+                    asset = import_data.get("payload", {}).get("spherical_asset", {})
+                    if not isinstance(asset, dict):
+                        continue
+                    master_path = asset.get("master_path")
+                    if isinstance(master_path, str):
+                        spherical_master_paths.add(str(Path(master_path).resolve()))
                 media_dir = Path(context.media_dir)
                 try:
                     project_media_root = Path(client_cfg.project.media_dir).resolve()
@@ -114,6 +125,8 @@ class ToolInterceptor:
                 for file_name in os.listdir(media_dir):
                     path = media_dir / file_name
                     if path.is_dir():
+                        continue
+                    if str(path.resolve()) in spherical_master_paths:
                         continue
                     if inline_base64:
                         rel_path = str(path.relative_to(os.getcwd()))
@@ -167,6 +180,33 @@ class ToolInterceptor:
                                     "orig_path": p,
                                     "orig_md5": None,
                                 })
+                # Session-scoped spherical renders are ordinary flat MP4s and may
+                # enter the existing workflow. Pull only persisted outputs from the
+                # active session; raw masters and .insv files are never included.
+                for render_meta in store.list_meta(node_ids={"render_reframed_clip"}):
+                    _, render_data = store.load_result(render_meta.artifact_id)
+                    if not isinstance(render_data, dict):
+                        continue
+                    rendered_media = render_data.get("payload", {}).get("media", [])
+                    if not isinstance(rendered_media, list):
+                        continue
+                    for item in rendered_media:
+                        if not isinstance(item, dict):
+                            continue
+                        p = item.get("path")
+                        if not isinstance(p, str) or Path(p).suffix.lower() != ".mp4":
+                            continue
+                        resolved = str(Path(p).resolve())
+                        if resolved in seen_paths or not Path(resolved).is_file():
+                            continue
+                        seen_paths.add(resolved)
+                        input_data["inputs"].append(
+                            {
+                                "path": resolved,
+                                "orig_path": resolved,
+                                "orig_md5": None,
+                            }
+                        )
             elif node_id in list(meta_collector.id_to_tool.keys()):
                 # 1. Determine execution mode and dependency requirements
                 is_skip_mode = request.args.get('mode', 'auto') != 'auto'

@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "WorkerDiagnosticCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "warn",
+            "fail"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "status",
+        "required",
+        "message"
+      ],
+      "title": "WorkerDiagnosticCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "worker_version": {
+      "minLength": 1,
+      "title": "Worker Version",
+      "type": "string"
+    },
+    "compatible": {
+      "title": "Compatible",
+      "type": "boolean"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/WorkerDiagnosticCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "worker_version",
+    "compatible",
+    "checks"
+  ],
+  "title": "WorkerDiagnosticReport",
+  "type": "object"
+}

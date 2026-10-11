@@ -1,0 +1,30 @@
+[Unit]
+Description=OpenStoryline distributed spherical worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=openstoryline-worker
+Group=openstoryline-worker
+EnvironmentFile=/etc/openstoryline/insta360-worker.env
+WorkingDirectory=/opt/openstoryline
+ExecStart=/opt/openstoryline/venv/bin/python -m open_storyline.spherical.worker_service serve
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillMode=control-group
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+ReadWritePaths=/var/lib/openstoryline-worker /srv/openstoryline/output /srv/openstoryline/uploads
+
+[Install]
+WantedBy=multi-user.target

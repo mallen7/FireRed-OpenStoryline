@@ -1,0 +1,162 @@
+{
+  "$defs": {
+    "WorkerDiscoveryFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "format": "path",
+          "title": "Path",
+          "type": "string"
+        },
+        "filename": {
+          "title": "Filename",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "modified_unix_seconds": {
+          "minimum": 0,
+          "title": "Modified Unix Seconds",
+          "type": "number"
+        },
+        "lens_marker": {
+          "anyOf": [
+            {
+              "enum": [
+                "00",
+                "10"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lens Marker"
+        },
+        "stream_metadata": {
+          "additionalProperties": true,
+          "title": "Stream Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "path",
+        "filename",
+        "size_bytes",
+        "modified_unix_seconds"
+      ],
+      "title": "WorkerDiscoveryFile",
+      "type": "object"
+    },
+    "WorkerDiscoveryGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "minLength": 1,
+          "title": "Group Id",
+          "type": "string"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/WorkerDiscoveryFile"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Files",
+          "type": "array"
+        },
+        "proposed_order": {
+          "items": {
+            "format": "path",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Proposed Order",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Reasons",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "requires_confirmation": {
+          "default": true,
+          "title": "Requires Confirmation",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "group_id",
+        "files",
+        "proposed_order",
+        "confidence",
+        "reasons"
+      ],
+      "title": "WorkerDiscoveryGroup",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "directory": {
+      "format": "path",
+      "title": "Directory",
+      "type": "string"
+    },
+    "groups": {
+      "items": {
+        "$ref": "#/$defs/WorkerDiscoveryGroup"
+      },
+      "title": "Groups",
+      "type": "array"
+    },
+    "ungrouped": {
+      "items": {
+        "$ref": "#/$defs/WorkerDiscoveryFile"
+      },
+      "title": "Ungrouped",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "directory",
+    "groups"
+  ],
+  "title": "WorkerDiscoveryResponse",
+  "type": "object"
+}

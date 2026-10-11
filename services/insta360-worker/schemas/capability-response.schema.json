@@ -1,0 +1,118 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "worker_version": {
+      "minLength": 1,
+      "title": "Worker Version",
+      "type": "string"
+    },
+    "provider": {
+      "minLength": 1,
+      "title": "Provider",
+      "type": "string"
+    },
+    "sdk_enabled": {
+      "title": "Sdk Enabled",
+      "type": "boolean"
+    },
+    "sdk_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sdk Version"
+    },
+    "can_decode_insv": {
+      "title": "Can Decode Insv",
+      "type": "boolean"
+    },
+    "can_stitch": {
+      "title": "Can Stitch",
+      "type": "boolean"
+    },
+    "supports_progress": {
+      "title": "Supports Progress",
+      "type": "boolean"
+    },
+    "supports_cancellation": {
+      "title": "Supports Cancellation",
+      "type": "boolean"
+    },
+    "supported_codecs": {
+      "items": {
+        "enum": [
+          "h264",
+          "h265"
+        ],
+        "type": "string"
+      },
+      "title": "Supported Codecs",
+      "type": "array"
+    },
+    "supported_stitch_types": {
+      "items": {
+        "enum": [
+          "template",
+          "optical_flow",
+          "dynamic",
+          "ai"
+        ],
+        "type": "string"
+      },
+      "title": "Supported Stitch Types",
+      "type": "array"
+    },
+    "max_input_files": {
+      "minimum": 1,
+      "title": "Max Input Files",
+      "type": "integer"
+    },
+    "requires_gpu": {
+      "title": "Requires Gpu",
+      "type": "boolean"
+    },
+    "target_platform": {
+      "title": "Target Platform",
+      "type": "string"
+    },
+    "model_root_configured": {
+      "title": "Model Root Configured",
+      "type": "boolean"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "worker_version",
+    "provider",
+    "sdk_enabled",
+    "can_decode_insv",
+    "can_stitch",
+    "supports_progress",
+    "supports_cancellation",
+    "supported_codecs",
+    "supported_stitch_types",
+    "max_input_files",
+    "requires_gpu",
+    "target_platform",
+    "model_root_configured"
+  ],
+  "title": "WorkerCapabilityResponse",
+  "type": "object"
+}

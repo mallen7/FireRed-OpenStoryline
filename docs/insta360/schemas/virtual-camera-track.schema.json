@@ -1,0 +1,174 @@
+{
+  "$defs": {
+    "CameraKeyframe": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "time_seconds": {
+          "minimum": 0,
+          "title": "Time Seconds",
+          "type": "number"
+        },
+        "yaw": {
+          "default": 0.0,
+          "title": "Yaw",
+          "type": "number"
+        },
+        "pitch": {
+          "default": 0.0,
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Pitch",
+          "type": "number"
+        },
+        "roll": {
+          "default": 0.0,
+          "title": "Roll",
+          "type": "number"
+        },
+        "horizontal_fov": {
+          "default": 90.0,
+          "exclusiveMaximum": 179.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Horizontal Fov",
+          "type": "number"
+        },
+        "easing": {
+          "$ref": "#/$defs/Easing",
+          "default": "linear"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Id"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        }
+      },
+      "required": [
+        "time_seconds"
+      ],
+      "title": "CameraKeyframe",
+      "type": "object"
+    },
+    "Easing": {
+      "enum": [
+        "linear",
+        "smoothstep",
+        "ease_in",
+        "ease_out",
+        "ease_in_out"
+      ],
+      "title": "Easing",
+      "type": "string"
+    },
+    "TrackCreatedBy": {
+      "enum": [
+        "manual",
+        "assisted",
+        "director"
+      ],
+      "title": "TrackCreatedBy",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "track_id": {
+      "minLength": 1,
+      "title": "Track Id",
+      "type": "string"
+    },
+    "asset_id": {
+      "minLength": 1,
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "output_width": {
+      "exclusiveMinimum": 0,
+      "title": "Output Width",
+      "type": "integer"
+    },
+    "output_height": {
+      "exclusiveMinimum": 0,
+      "title": "Output Height",
+      "type": "integer"
+    },
+    "source_start_seconds": {
+      "minimum": 0,
+      "title": "Source Start Seconds",
+      "type": "number"
+    },
+    "source_end_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Source End Seconds",
+      "type": "number"
+    },
+    "keyframes": {
+      "items": {
+        "$ref": "#/$defs/CameraKeyframe"
+      },
+      "minItems": 1,
+      "title": "Keyframes",
+      "type": "array"
+    },
+    "created_by": {
+      "$ref": "#/$defs/TrackCreatedBy",
+      "default": "manual"
+    },
+    "generation_metadata": {
+      "additionalProperties": true,
+      "title": "Generation Metadata",
+      "type": "object"
+    }
+  },
+  "required": [
+    "track_id",
+    "asset_id",
+    "name",
+    "output_width",
+    "output_height",
+    "source_start_seconds",
+    "source_end_seconds",
+    "keyframes"
+  ],
+  "title": "VirtualCameraTrack",
+  "type": "object"
+}

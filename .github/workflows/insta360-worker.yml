@@ -1,0 +1,106 @@
+name: Insta360 worker public build
+
+on:
+  pull_request:
+    paths:
+      - "services/insta360-worker/**"
+      - "src/open_storyline/spherical/**"
+      - "tests/test_spherical_distributed_worker.py"
+      - "tests/test_spherical_worker.py"
+      - "tests/test_spherical_ui.py"
+      - "tests/spherical_ui_model.test.mjs"
+      - "agent_fastapi.py"
+      - "web/**"
+      - "scripts/benchmark_spherical.py"
+      - "requirements.txt"
+      - ".github/workflows/insta360-worker.yml"
+  push:
+    paths:
+      - "services/insta360-worker/**"
+      - "src/open_storyline/spherical/**"
+      - "tests/test_spherical_distributed_worker.py"
+      - "tests/test_spherical_worker.py"
+      - "tests/test_spherical_ui.py"
+      - "tests/spherical_ui_model.test.mjs"
+      - "agent_fastapi.py"
+      - "web/**"
+      - "scripts/benchmark_spherical.py"
+      - "requirements.txt"
+      - ".github/workflows/insta360-worker.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  spherical-regression:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install FFmpeg and Python dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install -r requirements.txt
+      - name: Compile Python sources
+        run: PYTHONPATH=src:. python -m compileall -q src tests agent_fastapi.py
+      - name: Run Python regression suite
+        run: PYTHONPATH=src:. python -m unittest discover -s tests -v
+      - name: Run browser editor model tests
+        run: node --test tests/spherical_ui_model.test.mjs
+      - name: Run disposable performance smoke
+        run: PYTHONPATH=src:. python scripts/benchmark_spherical.py --quick > /tmp/spherical-performance.json
+
+  public-stub:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install public build dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libjson-c-dev
+      - name: Configure without proprietary SDK
+        run: >-
+          cmake -S services/insta360-worker
+          -B services/insta360-worker/build
+          -DINSTA360_ENABLE_SDK=OFF
+          -DBUILD_TESTING=ON
+      - name: Build
+        run: cmake --build services/insta360-worker/build --parallel 2
+      - name: Test
+        run: ctest --test-dir services/insta360-worker/build --output-on-failure
+      - name: Prove missing private SDK fails closed
+        run: |
+          if cmake -S services/insta360-worker \
+            -B services/insta360-worker/build-invalid-sdk \
+            -DINSTA360_ENABLE_SDK=ON \
+            -DINSTA360_SDK_ROOT=/missing/operator-sdk; then
+            echo "SDK-enabled configuration unexpectedly succeeded" >&2
+            exit 1
+          fi
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install public HTTP test dependencies
+        run: >-
+          python -m pip install
+          fastapi==0.128.0 httpx==0.28.1 numpy==2.4.6 Pillow==11.3.0
+          "pydantic>=2.10,<3" "uvicorn[standard]==0.40.0"
+      - name: Test distributed worker without proprietary dependencies
+        run: >-
+          PYTHONPATH=src python -m unittest
+          tests.test_spherical_distributed_worker tests.test_spherical_worker
+      - name: Validate Compose deployment
+        run: |
+          touch /tmp/openstoryline-worker-ci.token
+          OPENSTORYLINE_WORKER_TOKEN_FILE=/tmp/openstoryline-worker-ci.token \
+            docker compose -f services/insta360-worker/docker-compose.yml config --quiet
+      - name: Build public HTTP image
+        run: >-
+          docker build
+          -f services/insta360-worker/Dockerfile.http
+          -t openstoryline/insta360-worker-http:ci .

@@ -1,0 +1,163 @@
+{
+  "$defs": {
+    "IngestMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "default": "studio-export",
+          "title": "Provider",
+          "type": "string"
+        },
+        "stabilization": {
+          "default": "unknown",
+          "title": "Stabilization",
+          "type": "string"
+        },
+        "stitch_type": {
+          "default": "unknown",
+          "title": "Stitch Type",
+          "type": "string"
+        }
+      },
+      "title": "IngestMetadata",
+      "type": "object"
+    },
+    "Projection": {
+      "enum": [
+        "equirectangular"
+      ],
+      "title": "Projection",
+      "type": "string"
+    },
+    "SourceType": {
+      "enum": [
+        "equirectangular"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "asset_id": {
+      "minLength": 1,
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "source_type": {
+      "$ref": "#/$defs/SourceType",
+      "default": "equirectangular"
+    },
+    "source_paths": {
+      "items": {
+        "format": "path",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Paths",
+      "type": "array"
+    },
+    "source_hashes": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Hashes",
+      "type": "array"
+    },
+    "camera_model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Camera Model"
+    },
+    "projection": {
+      "$ref": "#/$defs/Projection",
+      "default": "equirectangular"
+    },
+    "master_path": {
+      "format": "path",
+      "title": "Master Path",
+      "type": "string"
+    },
+    "proxy_path": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proxy Path"
+    },
+    "width": {
+      "exclusiveMinimum": 0,
+      "title": "Width",
+      "type": "integer"
+    },
+    "height": {
+      "exclusiveMinimum": 0,
+      "title": "Height",
+      "type": "integer"
+    },
+    "fps": {
+      "exclusiveMinimum": 0,
+      "title": "Fps",
+      "type": "number"
+    },
+    "duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "audio_stream_index": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Audio Stream Index"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "ingest": {
+      "$ref": "#/$defs/IngestMetadata"
+    }
+  },
+  "required": [
+    "asset_id",
+    "source_paths",
+    "source_hashes",
+    "master_path",
+    "width",
+    "height",
+    "fps",
+    "duration_seconds"
+  ],
+  "title": "SphericalAsset",
+  "type": "object"
+}

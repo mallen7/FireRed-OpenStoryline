@@ -1,0 +1,337 @@
+{
+  "$defs": {
+    "TimelineSignal": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "signal_id": {
+          "minLength": 1,
+          "title": "Signal Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/TimelineSignalKind"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "minimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Id"
+        },
+        "clip_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clip Id"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "signal_id",
+        "kind",
+        "start_seconds",
+        "end_seconds"
+      ],
+      "title": "TimelineSignal",
+      "type": "object"
+    },
+    "TimelineSignalKind": {
+      "enum": [
+        "transcript",
+        "word",
+        "scene",
+        "subject",
+        "face_activity",
+        "mouth_activity",
+        "audio_activity",
+        "clip_understanding",
+        "script",
+        "timeline_plan"
+      ],
+      "title": "TimelineSignalKind",
+      "type": "string"
+    },
+    "TranscriptTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "turn_id": {
+          "minLength": 1,
+          "title": "Turn Id",
+          "type": "string"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "word_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Word Ids",
+          "type": "array"
+        },
+        "clip_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clip Id"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        }
+      },
+      "required": [
+        "turn_id",
+        "start_seconds",
+        "end_seconds",
+        "text"
+      ],
+      "title": "TranscriptTurn",
+      "type": "object"
+    },
+    "TranscriptWord": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "word_id": {
+          "minLength": 1,
+          "title": "Word Id",
+          "type": "string"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "clip_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clip Id"
+        }
+      },
+      "required": [
+        "word_id",
+        "start_seconds",
+        "end_seconds",
+        "text"
+      ],
+      "title": "TranscriptWord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "timeline_id": {
+      "minLength": 1,
+      "title": "Timeline Id",
+      "type": "string"
+    },
+    "analysis_id": {
+      "minLength": 1,
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "asset_id": {
+      "minLength": 1,
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "transcript_turns": {
+      "items": {
+        "$ref": "#/$defs/TranscriptTurn"
+      },
+      "title": "Transcript Turns",
+      "type": "array"
+    },
+    "words": {
+      "items": {
+        "$ref": "#/$defs/TranscriptWord"
+      },
+      "title": "Words",
+      "type": "array"
+    },
+    "scene_boundaries_seconds": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Scene Boundaries Seconds",
+      "type": "array"
+    },
+    "signals": {
+      "items": {
+        "$ref": "#/$defs/TimelineSignal"
+      },
+      "title": "Signals",
+      "type": "array"
+    },
+    "source_summary": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Source Summary",
+      "type": "object"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "timeline_id",
+    "analysis_id",
+    "asset_id",
+    "duration_seconds"
+  ],
+  "title": "NormalizedStoryTimeline",
+  "type": "object"
+}

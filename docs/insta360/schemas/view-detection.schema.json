@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "DetectionKind": {
+      "enum": [
+        "object",
+        "person",
+        "face"
+      ],
+      "title": "DetectionKind",
+      "type": "string"
+    },
+    "NormalizedBoundingBox": {
+      "additionalProperties": false,
+      "properties": {
+        "x_min": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "X Min",
+          "type": "number"
+        },
+        "y_min": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Y Min",
+          "type": "number"
+        },
+        "x_max": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "X Max",
+          "type": "number"
+        },
+        "y_max": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Y Max",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x_min",
+        "y_min",
+        "x_max",
+        "y_max"
+      ],
+      "title": "NormalizedBoundingBox",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "detection_id": {
+      "minLength": 1,
+      "title": "Detection Id",
+      "type": "string"
+    },
+    "timestamp_seconds": {
+      "minimum": 0,
+      "title": "Timestamp Seconds",
+      "type": "number"
+    },
+    "viewport_id": {
+      "minLength": 1,
+      "title": "Viewport Id",
+      "type": "string"
+    },
+    "bounding_box": {
+      "$ref": "#/$defs/NormalizedBoundingBox"
+    },
+    "kind": {
+      "$ref": "#/$defs/DetectionKind"
+    },
+    "label": {
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "detector_backend": {
+      "minLength": 1,
+      "title": "Detector Backend",
+      "type": "string"
+    },
+    "embedding": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 512,
+      "title": "Embedding",
+      "type": "array"
+    },
+    "identity_evidence": {
+      "additionalProperties": true,
+      "title": "Identity Evidence",
+      "type": "object"
+    }
+  },
+  "required": [
+    "detection_id",
+    "timestamp_seconds",
+    "viewport_id",
+    "bounding_box",
+    "kind",
+    "label",
+    "confidence",
+    "detector_backend"
+  ],
+  "title": "ViewDetection",
+  "type": "object"
+}

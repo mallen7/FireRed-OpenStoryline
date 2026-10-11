@@ -131,6 +131,66 @@ class MCPConfig(ConfigBaseModel):
 class SkillsConfig(ConfigBaseModel):
     skill_dir: Path = Field(..., description="Skill directory.")
 
+
+class SphericalConfig(ConfigBaseModel):
+    """Feature flags for the optional spherical-media extension."""
+
+    enabled: bool = False
+    enable_sdk_worker: bool = False
+    worker_transport: Literal["local", "http"] = "local"
+    worker_executable: Path = Path(
+        "./services/insta360-worker/build/insta360-worker"
+    )
+    worker_url: str = "http://127.0.0.1:8090"
+    worker_token_env: str = Field(
+        default="OPENSTORYLINE_WORKER_TOKEN",
+        pattern=r"^[A-Z][A-Z0-9_]{2,127}$",
+    )
+    worker_verify_tls: bool = True
+    worker_timeout_seconds: float = Field(default=86_400.0, gt=0)
+    workspace_dir: Path = Path("./outputs")
+    cache_dir: Path = Path("./.storyline/spherical-cache")
+    renderer_sample_interval_seconds: float = Field(default=0.25, ge=0.05, le=5.0)
+    proxy_width: int = Field(default=1024, ge=320, le=4096, multiple_of=2)
+    contact_sheet_thumbnail_width: int = Field(
+        default=320,
+        ge=160,
+        le=1024,
+        multiple_of=2,
+    )
+    preview_max_dimension: int = Field(
+        default=640,
+        ge=160,
+        le=1920,
+        multiple_of=2,
+    )
+    analysis_interval_seconds: float = Field(default=0.5, ge=0.1, le=10.0)
+    analysis_max_frames: int = Field(default=120, ge=1, le=600)
+    analysis_yaw_step_degrees: Literal[30, 45, 60, 90, 120] = 60
+    analysis_pitch_centers: List[float] = Field(
+        default_factory=lambda: [-45.0, 0.0, 45.0]
+    )
+    analysis_horizontal_fov: float = Field(default=100.0, gt=1.0, lt=179.0)
+    analysis_view_width: int = Field(default=256, ge=96, le=1024, multiple_of=2)
+    analysis_view_height: int = Field(default=256, ge=96, le=1024, multiple_of=2)
+    analysis_minimum_detection_confidence: float = Field(
+        default=0.25,
+        ge=0.0,
+        le=1.0,
+    )
+    analysis_dedup_angular_threshold_degrees: float = Field(
+        default=10.0,
+        gt=0.0,
+        le=45.0,
+    )
+    analysis_max_track_angular_distance_degrees: float = Field(
+        default=45.0,
+        gt=0.0,
+        le=180.0,
+    )
+    analysis_max_occlusion_seconds: float = Field(default=1.5, ge=0.0, le=30.0)
+
+
 class PexelsConfig(ConfigBaseModel):
     pexels_api_key: str = ""
 
@@ -248,6 +308,7 @@ class Settings(ConfigBaseModel):
     local_mcp_server: MCPConfig
 
     skills: SkillsConfig
+    spherical: SphericalConfig = Field(default_factory=SphericalConfig)
     search_media: PexelsConfig
     split_shots: SplitShotsConfig
     understand_clips: UnderstandClipsConfig

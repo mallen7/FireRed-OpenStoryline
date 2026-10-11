@@ -1,0 +1,339 @@
+{
+  "$defs": {
+    "AnalysisSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "interval_seconds": {
+          "default": 0.5,
+          "maximum": 10.0,
+          "minimum": 0.1,
+          "title": "Interval Seconds",
+          "type": "number"
+        },
+        "max_frames": {
+          "default": 120,
+          "maximum": 600,
+          "minimum": 1,
+          "title": "Max Frames",
+          "type": "integer"
+        },
+        "yaw_step_degrees": {
+          "default": 60,
+          "enum": [
+            30,
+            45,
+            60,
+            90,
+            120
+          ],
+          "title": "Yaw Step Degrees",
+          "type": "integer"
+        },
+        "pitch_centers": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Pitch Centers",
+          "type": "array"
+        },
+        "horizontal_fov": {
+          "default": 100.0,
+          "exclusiveMaximum": 179.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Horizontal Fov",
+          "type": "number"
+        },
+        "view_width": {
+          "default": 256,
+          "maximum": 1024,
+          "minimum": 96,
+          "multipleOf": 2,
+          "title": "View Width",
+          "type": "integer"
+        },
+        "view_height": {
+          "default": 256,
+          "maximum": 1024,
+          "minimum": 96,
+          "multipleOf": 2,
+          "title": "View Height",
+          "type": "integer"
+        },
+        "minimum_detection_confidence": {
+          "default": 0.25,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Minimum Detection Confidence",
+          "type": "number"
+        },
+        "dedup_angular_threshold_degrees": {
+          "default": 10.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 45.0,
+          "title": "Dedup Angular Threshold Degrees",
+          "type": "number"
+        },
+        "max_track_angular_distance_degrees": {
+          "default": 45.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 180.0,
+          "title": "Max Track Angular Distance Degrees",
+          "type": "number"
+        },
+        "max_occlusion_seconds": {
+          "default": 1.5,
+          "maximum": 30.0,
+          "minimum": 0.0,
+          "title": "Max Occlusion Seconds",
+          "type": "number"
+        }
+      },
+      "title": "AnalysisSettings",
+      "type": "object"
+    },
+    "IngestMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "default": "studio-export",
+          "title": "Provider",
+          "type": "string"
+        },
+        "stabilization": {
+          "default": "unknown",
+          "title": "Stabilization",
+          "type": "string"
+        },
+        "stitch_type": {
+          "default": "unknown",
+          "title": "Stitch Type",
+          "type": "string"
+        }
+      },
+      "title": "IngestMetadata",
+      "type": "object"
+    },
+    "Projection": {
+      "enum": [
+        "equirectangular"
+      ],
+      "title": "Projection",
+      "type": "string"
+    },
+    "RetryPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "max_attempts": {
+          "default": 2,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "initial_delay_seconds": {
+          "default": 1.0,
+          "maximum": 300.0,
+          "minimum": 0.0,
+          "title": "Initial Delay Seconds",
+          "type": "number"
+        },
+        "maximum_delay_seconds": {
+          "default": 30.0,
+          "maximum": 900.0,
+          "minimum": 0.0,
+          "title": "Maximum Delay Seconds",
+          "type": "number"
+        }
+      },
+      "title": "RetryPolicy",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "equirectangular"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "SphericalAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "asset_id": {
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType",
+          "default": "equirectangular"
+        },
+        "source_paths": {
+          "items": {
+            "format": "path",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        },
+        "source_hashes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Hashes",
+          "type": "array"
+        },
+        "camera_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Camera Model"
+        },
+        "projection": {
+          "$ref": "#/$defs/Projection",
+          "default": "equirectangular"
+        },
+        "master_path": {
+          "format": "path",
+          "title": "Master Path",
+          "type": "string"
+        },
+        "proxy_path": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy Path"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "integer"
+        },
+        "fps": {
+          "exclusiveMinimum": 0,
+          "title": "Fps",
+          "type": "number"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "audio_stream_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audio Stream Index"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "ingest": {
+          "$ref": "#/$defs/IngestMetadata"
+        }
+      },
+      "required": [
+        "asset_id",
+        "source_paths",
+        "source_hashes",
+        "master_path",
+        "width",
+        "height",
+        "fps",
+        "duration_seconds"
+      ],
+      "title": "SphericalAsset",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "asset": {
+      "$ref": "#/$defs/SphericalAsset"
+    },
+    "cache_dir": {
+      "format": "path",
+      "title": "Cache Dir",
+      "type": "string"
+    },
+    "settings": {
+      "$ref": "#/$defs/AnalysisSettings"
+    },
+    "timeout_seconds": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "maximum": 604800.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Timeout Seconds"
+    },
+    "retry_policy": {
+      "$ref": "#/$defs/RetryPolicy"
+    }
+  },
+  "required": [
+    "asset",
+    "cache_dir"
+  ],
+  "title": "AnalyzeJobSubmission",
+  "type": "object"
+}

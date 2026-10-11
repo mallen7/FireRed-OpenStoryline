@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "event": {
+      "const": "progress",
+      "default": "progress",
+      "title": "Event",
+      "type": "string"
+    },
+    "job_id": {
+      "format": "uuid",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "progress_percent": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Progress Percent",
+      "type": "integer"
+    },
+    "message": {
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "job_id",
+    "progress_percent",
+    "message"
+  ],
+  "title": "WorkerStitchProgressEvent",
+  "type": "object"
+}

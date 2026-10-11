@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "WorkerInputMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "format": "path",
+          "title": "Path",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "modified_unix_seconds": {
+          "minimum": 0,
+          "title": "Modified Unix Seconds",
+          "type": "number"
+        },
+        "readable": {
+          "title": "Readable",
+          "type": "boolean"
+        },
+        "extension": {
+          "title": "Extension",
+          "type": "string"
+        },
+        "stream_metadata": {
+          "additionalProperties": true,
+          "title": "Stream Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "path",
+        "size_bytes",
+        "modified_unix_seconds",
+        "readable",
+        "extension"
+      ],
+      "title": "WorkerInputMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "decodable": {
+      "title": "Decodable",
+      "type": "boolean"
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/WorkerInputMetadata"
+      },
+      "minItems": 1,
+      "title": "Inputs",
+      "type": "array"
+    },
+    "camera_model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Camera Model"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "provider",
+    "decodable",
+    "inputs"
+  ],
+  "title": "WorkerProbeResponse",
+  "type": "object"
+}

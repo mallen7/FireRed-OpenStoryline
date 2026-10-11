@@ -23,6 +23,7 @@ try:
 except ModuleNotFoundError:
     import tomli as tomllib # Python <= 3.10
 import traceback
+from urllib.parse import quote
 
 try:
     from uvicorn.protocols.utils import ClientDisconnected
@@ -57,6 +58,20 @@ from open_storyline.config import Settings
 from open_storyline.storage.agent_memory import ArtifactStore
 from open_storyline.mcp.hooks.node_interceptors import ToolInterceptor
 from open_storyline.mcp.hooks.chat_middleware import set_mcp_log_sink, reset_mcp_log_sink
+from open_storyline.spherical.errors import (
+    SphericalCapabilityError,
+    SphericalDisabledError,
+    SphericalError,
+    SphericalValidationError,
+)
+from open_storyline.spherical.ui_schemas import (
+    SPHERICAL_UI_SCHEMA_MODELS,
+    SphericalUiPreviewRequest,
+    SphericalUiRenderRequest,
+    SphericalUiTrackCreateRequest,
+    SphericalUiTrackUpdateRequest,
+)
+from open_storyline.spherical.ui_service import SphericalUiService
 
 WEB_DIR = os.path.join(ROOT_DIR, "web")
 STATIC_DIR = os.path.join(WEB_DIR, "static")
@@ -558,8 +573,10 @@ def guess_media_type(path: str) -> str:
 
 def _is_under_dir(path: str, root: str) -> bool:
     try:
-        path = os.path.abspath(path)
-        root = os.path.abspath(root)
+        # Resolve symlinks before comparing. An abspath-only check can approve a
+        # symlink inside an allowed root that points to a file outside it.
+        path = os.path.realpath(path)
+        root = os.path.realpath(root)
         return os.path.commonpath([path, root]) == root
     except Exception:
         return False
@@ -1290,6 +1307,9 @@ class ChatSession:
 
         # 直传（multipart 多文件）时的“预占位”，避免并发竞争导致超过上限
         self._direct_upload_reservations = 0
+        # UI-generated flat renders enter the ordinary media library but are not
+        # pending chat attachments.
+        self._generated_media_reservations = 0
 
         self.agent: Any = None
         self.node_manager = None
@@ -1298,6 +1318,7 @@ class ChatSession:
         # 锁分离：避免“流式输出”阻塞上传/删除 pending
         self.chat_lock = asyncio.Lock()
         self.media_lock = asyncio.Lock()
+        self.spherical_lock = asyncio.Lock()
 
         self.sent_media_total: int = 0
         self._attach_stats_msg_idx = 1
@@ -2069,7 +2090,12 @@ class ChatSession:
 
     def _check_media_caps_locked(self, add: int = 0) -> None:
         add = int(max(0, add))
-        total = len(self.load_media) + len(self.resumable_uploads) + int(self._direct_upload_reservations)
+        total = (
+            len(self.load_media)
+            + len(self.resumable_uploads)
+            + int(self._direct_upload_reservations)
+            + int(self._generated_media_reservations)
+        )
         pending = len(self.pending_media_ids) + len(self.resumable_uploads) + int(self._direct_upload_reservations)
 
         if MAX_MEDIA_PER_SESSION > 0 and (total + add) > MAX_MEDIA_PER_SESSION:
@@ -2108,6 +2134,50 @@ class ChatSession:
             )
 
         return metas
+
+    async def add_generated_media(self, source_path: str, display_name: str) -> MediaMeta:
+        """Copy a completed editor render into the ordinary session media library."""
+        source = os.path.realpath(source_path)
+        if not os.path.isfile(source):
+            raise HTTPException(status_code=404, detail="render output is unavailable")
+
+        display = sanitize_filename(display_name or os.path.basename(source) or "reframed.mp4")
+        async with self.media_lock:
+            total = (
+                len(self.load_media)
+                + len(self.resumable_uploads)
+                + int(self._direct_upload_reservations)
+                + int(self._generated_media_reservations)
+            )
+            if MAX_MEDIA_PER_SESSION > 0 and total + 1 > MAX_MEDIA_PER_SESSION:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"session media limit reached: {total}/{MAX_MEDIA_PER_SESSION}",
+                )
+            store_filename = self._reserve_store_filenames_locked([display])[0]
+            self._generated_media_reservations += 1
+
+        temporary = os.path.join(self.uploads_dir, f"generated-{uuid.uuid4().hex}.part")
+        try:
+            await anyio.to_thread.run_sync(shutil.copy2, source, temporary)
+            meta = await self.media_store.save_from_path(
+                temporary,
+                store_filename=store_filename,
+                display_name=display,
+            )
+            async with self.media_lock:
+                self.load_media[meta.id] = meta
+            return meta
+        finally:
+            async with self.media_lock:
+                self._generated_media_reservations = max(
+                    0, self._generated_media_reservations - 1
+                )
+            try:
+                if os.path.exists(temporary):
+                    os.remove(temporary)
+            except OSError:
+                pass
 
     async def delete_pending_media(self, media_id: str) -> None:
         async with self.media_lock:
@@ -2904,11 +2974,15 @@ async def preview_local_file(session_id: str, path: str):
     else:
         ap = os.path.abspath(os.path.join(ROOT_DIR, p))
 
+    configured_server_cache = Path(app.state.cfg.local_mcp_server.server_cache_dir).expanduser()
+    if not configured_server_cache.is_absolute():
+        configured_server_cache = Path(ROOT_DIR) / configured_server_cache
+
     allowed_roots = [
         os.path.abspath(sess.media_dir),
         os.path.abspath(app.state.cfg.project.outputs_dir),
-        os.path.abspath(app.state.cfg.project.outputs_dir),
         os.path.abspath(app.state.cfg.project.bgm_dir),
+        os.path.abspath(configured_server_cache),
         os.path.abspath(SERVER_CACHE_DIR),
     ]
 
@@ -2919,7 +2993,10 @@ async def preview_local_file(session_id: str, path: str):
         raise HTTPException(status_code=404, detail="file not found")
 
     # 对 cache 文件强缓存
-    headers = {"Cache-Control": "public, max-age=31536000, immutable"} if _is_under_dir(ap, SERVER_CACHE_DIR) else None
+    is_cache_file = _is_under_dir(ap, configured_server_cache) or _is_under_dir(
+        ap, SERVER_CACHE_DIR
+    )
+    headers = {"Cache-Control": "public, max-age=31536000, immutable"} if is_cache_file else None
 
     return FileResponse(
         ap,
@@ -2927,6 +3004,169 @@ async def preview_local_file(session_id: str, path: str):
         filename=os.path.basename(ap),
         headers=headers,
     )
+
+
+# -------------------------
+# spherical editor (REST, session-scoped)
+# -------------------------
+def _spherical_preview_url(session_id: str, path: Path) -> str:
+    sid = quote(session_id, safe="")
+    encoded_path = quote(str(path), safe="")
+    return f"/api/sessions/{sid}/preview?path={encoded_path}"
+
+
+def _raise_spherical_http_error(exc: SphericalError) -> None:
+    if isinstance(exc, SphericalDisabledError):
+        status = 409
+    elif isinstance(exc, SphericalValidationError):
+        status = 422
+    elif isinstance(exc, SphericalCapabilityError):
+        status = 503
+    else:
+        status = 500
+    raise HTTPException(status_code=status, detail=exc.as_dict()) from exc
+
+
+@api.get("/meta/spherical-ui-schemas")
+async def get_spherical_ui_schemas():
+    return JSONResponse(
+        {
+            name: model.model_json_schema()
+            for name, model in SPHERICAL_UI_SCHEMA_MODELS.items()
+        }
+    )
+
+
+@api.get("/sessions/{session_id}/spherical")
+async def get_spherical_workspace(session_id: str):
+    store: SessionStore = app.state.sessions
+    sess = await store.get_or_404(session_id)
+    service = SphericalUiService(app.state.cfg, session_id)
+    try:
+        async with sess.spherical_lock:
+            state = await anyio.to_thread.run_sync(
+                service.snapshot,
+                lambda path: _spherical_preview_url(session_id, path),
+            )
+        return JSONResponse(state.model_dump(mode="json"))
+    except SphericalError as exc:
+        _raise_spherical_http_error(exc)
+
+
+@api.post("/sessions/{session_id}/spherical/tracks")
+async def create_spherical_track(
+    session_id: str,
+    request: SphericalUiTrackCreateRequest,
+):
+    store: SessionStore = app.state.sessions
+    sess = await store.get_or_404(session_id)
+    service = SphericalUiService(app.state.cfg, session_id)
+    try:
+        async with sess.spherical_lock:
+            result = await anyio.to_thread.run_sync(service.create_track, request)
+        return JSONResponse(result.model_dump(mode="json"))
+    except SphericalError as exc:
+        _raise_spherical_http_error(exc)
+
+
+@api.put("/sessions/{session_id}/spherical/tracks/{track_id}")
+async def update_spherical_track(
+    session_id: str,
+    track_id: str,
+    request: SphericalUiTrackUpdateRequest,
+):
+    store: SessionStore = app.state.sessions
+    sess = await store.get_or_404(session_id)
+    service = SphericalUiService(app.state.cfg, session_id)
+    try:
+        async with sess.spherical_lock:
+            result = await anyio.to_thread.run_sync(
+                service.update_track, track_id, request
+            )
+        return JSONResponse(result.model_dump(mode="json"))
+    except SphericalError as exc:
+        _raise_spherical_http_error(exc)
+
+
+@api.post("/sessions/{session_id}/spherical/suggestions/{suggestion_id}/accept")
+async def accept_spherical_suggestion(session_id: str, suggestion_id: str):
+    store: SessionStore = app.state.sessions
+    sess = await store.get_or_404(session_id)
+    service = SphericalUiService(app.state.cfg, session_id)
+    try:
+        async with sess.spherical_lock:
+            result = await anyio.to_thread.run_sync(
+                service.accept_suggestion, suggestion_id
+            )
+        return JSONResponse(result.model_dump(mode="json"))
+    except SphericalError as exc:
+        _raise_spherical_http_error(exc)
+
+
+@api.post("/sessions/{session_id}/spherical/director/{proposal_id}/accept")
+async def accept_spherical_director_proposal(session_id: str, proposal_id: str):
+    store: SessionStore = app.state.sessions
+    sess = await store.get_or_404(session_id)
+    service = SphericalUiService(app.state.cfg, session_id)
+    try:
+        async with sess.spherical_lock:
+            result = await anyio.to_thread.run_sync(
+                service.accept_director_proposal, proposal_id
+            )
+        return JSONResponse(result.model_dump(mode="json"))
+    except SphericalError as exc:
+        _raise_spherical_http_error(exc)
+
+
+@api.post("/sessions/{session_id}/spherical/tracks/{track_id}/preview")
+async def preview_spherical_track(
+    session_id: str,
+    track_id: str,
+    request: SphericalUiPreviewRequest,
+):
+    store: SessionStore = app.state.sessions
+    sess = await store.get_or_404(session_id)
+    service = SphericalUiService(app.state.cfg, session_id)
+    try:
+        async with sess.spherical_lock:
+            result = await anyio.to_thread.run_sync(
+                service.render_preview, track_id, request
+            )
+        payload = result.model_dump(mode="json")
+        payload["preview_url"] = _spherical_preview_url(
+            session_id, result.output_path
+        )
+        return JSONResponse(payload)
+    except SphericalError as exc:
+        _raise_spherical_http_error(exc)
+
+
+@api.post("/sessions/{session_id}/spherical/tracks/{track_id}/render")
+async def render_spherical_track(
+    session_id: str,
+    track_id: str,
+    request: SphericalUiRenderRequest,
+):
+    store: SessionStore = app.state.sessions
+    sess = await store.get_or_404(session_id)
+    service = SphericalUiService(app.state.cfg, session_id)
+    try:
+        async with sess.spherical_lock:
+            result = await anyio.to_thread.run_sync(
+                service.render_final, track_id, request
+            )
+            ordinary_media = await sess.add_generated_media(
+                str(result.output_path), Path(result.output_path).name
+            )
+        await store.save_session_state(sess)
+        payload = result.model_dump(mode="json")
+        payload["preview_url"] = _spherical_preview_url(
+            session_id, result.output_path
+        )
+        payload["ordinary_media"] = sess.public_media(ordinary_media)
+        return JSONResponse(payload)
+    except SphericalError as exc:
+        _raise_spherical_http_error(exc)
 
 app.include_router(api)
 

@@ -1,0 +1,82 @@
+{
+  "$defs": {
+    "VisibilityState": {
+      "enum": [
+        "visible",
+        "occluded",
+        "lost"
+      ],
+      "title": "VisibilityState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "timestamp_seconds": {
+      "minimum": 0,
+      "title": "Timestamp Seconds",
+      "type": "number"
+    },
+    "yaw": {
+      "title": "Yaw",
+      "type": "number"
+    },
+    "pitch": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Pitch",
+      "type": "number"
+    },
+    "angular_width": {
+      "exclusiveMinimum": 0.0,
+      "maximum": 180.0,
+      "title": "Angular Width",
+      "type": "number"
+    },
+    "angular_height": {
+      "exclusiveMinimum": 0.0,
+      "maximum": 180.0,
+      "title": "Angular Height",
+      "type": "number"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "visibility": {
+      "$ref": "#/$defs/VisibilityState"
+    },
+    "source_viewports": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Viewports",
+      "type": "array"
+    },
+    "identity_evidence": {
+      "additionalProperties": true,
+      "title": "Identity Evidence",
+      "type": "object"
+    }
+  },
+  "required": [
+    "timestamp_seconds",
+    "yaw",
+    "pitch",
+    "angular_width",
+    "angular_height",
+    "confidence",
+    "visibility"
+  ],
+  "title": "SubjectSample",
+  "type": "object"
+}

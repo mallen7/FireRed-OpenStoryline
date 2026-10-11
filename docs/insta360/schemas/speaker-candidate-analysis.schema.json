@@ -1,0 +1,274 @@
+{
+  "$defs": {
+    "SpeakerAssessmentStatus": {
+      "enum": [
+        "probable",
+        "ambiguous",
+        "unresolved"
+      ],
+      "title": "SpeakerAssessmentStatus",
+      "type": "string"
+    },
+    "SpeakerCandidateScore": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "subject_id": {
+          "minLength": 1,
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "total_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Total Score",
+          "type": "number"
+        },
+        "components": {
+          "$ref": "#/$defs/SpeakerScoreComponents"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject_id",
+        "total_score",
+        "components"
+      ],
+      "title": "SpeakerCandidateScore",
+      "type": "object"
+    },
+    "SpeakerScoreComponents": {
+      "additionalProperties": false,
+      "properties": {
+        "voice_activity": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Voice Activity",
+          "type": "number"
+        },
+        "visible_face_activity": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Visible Face Activity",
+          "type": "number"
+        },
+        "mouth_movement": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Mouth Movement",
+          "type": "number"
+        },
+        "subject_continuity": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Subject Continuity",
+          "type": "number"
+        },
+        "scene_context": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Scene Context",
+          "type": "number"
+        },
+        "previous_speaker": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Previous Speaker",
+          "type": "number"
+        },
+        "transcript_turn_boundary": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Transcript Turn Boundary",
+          "type": "number"
+        },
+        "track_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Track Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "voice_activity",
+        "visible_face_activity",
+        "mouth_movement",
+        "subject_continuity",
+        "scene_context",
+        "previous_speaker",
+        "transcript_turn_boundary",
+        "track_confidence"
+      ],
+      "title": "SpeakerScoreComponents",
+      "type": "object"
+    },
+    "SpeakerTurnAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "description": "Version of this JSON contract.",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "turn_id": {
+          "minLength": 1,
+          "title": "Turn Id",
+          "type": "string"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/SpeakerAssessmentStatus"
+        },
+        "selected_subject_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Subject Id"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/SpeakerCandidateScore"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "turn_id",
+        "start_seconds",
+        "end_seconds",
+        "text",
+        "status",
+        "confidence"
+      ],
+      "title": "SpeakerTurnAssessment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "speaker_analysis_id": {
+      "minLength": 1,
+      "title": "Speaker Analysis Id",
+      "type": "string"
+    },
+    "timeline_id": {
+      "minLength": 1,
+      "title": "Timeline Id",
+      "type": "string"
+    },
+    "analysis_id": {
+      "minLength": 1,
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "asset_id": {
+      "minLength": 1,
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "turns": {
+      "items": {
+        "$ref": "#/$defs/SpeakerTurnAssessment"
+      },
+      "title": "Turns",
+      "type": "array"
+    },
+    "probable_threshold": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Probable Threshold",
+      "type": "number"
+    },
+    "ambiguity_margin": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Ambiguity Margin",
+      "type": "number"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "speaker_analysis_id",
+    "timeline_id",
+    "analysis_id",
+    "asset_id",
+    "profile_id",
+    "probable_threshold",
+    "ambiguity_margin"
+  ],
+  "title": "SpeakerCandidateAnalysis",
+  "type": "object"
+}

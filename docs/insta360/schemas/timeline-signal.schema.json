@@ -1,0 +1,111 @@
+{
+  "$defs": {
+    "TimelineSignalKind": {
+      "enum": [
+        "transcript",
+        "word",
+        "scene",
+        "subject",
+        "face_activity",
+        "mouth_activity",
+        "audio_activity",
+        "clip_understanding",
+        "script",
+        "timeline_plan"
+      ],
+      "title": "TimelineSignalKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "signal_id": {
+      "minLength": 1,
+      "title": "Signal Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/TimelineSignalKind"
+    },
+    "start_seconds": {
+      "minimum": 0,
+      "title": "Start Seconds",
+      "type": "number"
+    },
+    "end_seconds": {
+      "minimum": 0,
+      "title": "End Seconds",
+      "type": "number"
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confidence"
+    },
+    "subject_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Id"
+    },
+    "clip_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Clip Id"
+    },
+    "text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Text"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "required": [
+    "signal_id",
+    "kind",
+    "start_seconds",
+    "end_seconds"
+  ],
+  "title": "TimelineSignal",
+  "type": "object"
+}

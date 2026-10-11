@@ -1,0 +1,80 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "1.0",
+      "pattern": "^1\\.0$",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "enabled": {
+      "title": "Enabled",
+      "type": "boolean"
+    },
+    "assets": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Assets",
+      "type": "array"
+    },
+    "tracks": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Tracks",
+      "type": "array"
+    },
+    "suggestions": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Suggestions",
+      "type": "array"
+    },
+    "director_proposals": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Director Proposals",
+      "type": "array"
+    },
+    "subjects": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Subjects",
+      "type": "array"
+    },
+    "renders": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Renders",
+      "type": "array"
+    },
+    "worker": {
+      "additionalProperties": true,
+      "title": "Worker",
+      "type": "object"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "enabled"
+  ],
+  "title": "SphericalUiState",
+  "type": "object"
+}

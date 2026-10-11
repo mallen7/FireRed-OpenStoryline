@@ -1,0 +1,144 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "event": {
+      "const": "result",
+      "default": "result",
+      "title": "Event",
+      "type": "string"
+    },
+    "job_id": {
+      "format": "uuid",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "input_paths": {
+      "items": {
+        "format": "path",
+        "type": "string"
+      },
+      "maxItems": 2,
+      "minItems": 1,
+      "title": "Input Paths",
+      "type": "array"
+    },
+    "source_sha256": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 2,
+      "minItems": 1,
+      "title": "Source Sha256",
+      "type": "array"
+    },
+    "output_path": {
+      "format": "path",
+      "title": "Output Path",
+      "type": "string"
+    },
+    "output_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Output Sha256",
+      "type": "string"
+    },
+    "output_width": {
+      "exclusiveMinimum": 0,
+      "title": "Output Width",
+      "type": "integer"
+    },
+    "output_height": {
+      "exclusiveMinimum": 0,
+      "title": "Output Height",
+      "type": "integer"
+    },
+    "codec": {
+      "enum": [
+        "h264",
+        "h265"
+      ],
+      "title": "Codec",
+      "type": "string"
+    },
+    "bitrate_bps": {
+      "exclusiveMinimum": 0,
+      "title": "Bitrate Bps",
+      "type": "integer"
+    },
+    "enable_flowstate": {
+      "title": "Enable Flowstate",
+      "type": "boolean"
+    },
+    "enable_direction_lock": {
+      "title": "Enable Direction Lock",
+      "type": "boolean"
+    },
+    "stitch_type": {
+      "enum": [
+        "template",
+        "optical_flow",
+        "dynamic",
+        "ai"
+      ],
+      "title": "Stitch Type",
+      "type": "string"
+    },
+    "enable_stitch_fusion": {
+      "title": "Enable Stitch Fusion",
+      "type": "boolean"
+    },
+    "elapsed_seconds": {
+      "minimum": 0,
+      "title": "Elapsed Seconds",
+      "type": "number"
+    },
+    "sdk_log_path": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sdk Log Path"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "job_id",
+    "provider",
+    "input_paths",
+    "source_sha256",
+    "output_path",
+    "output_sha256",
+    "output_width",
+    "output_height",
+    "codec",
+    "bitrate_bps",
+    "enable_flowstate",
+    "enable_direction_lock",
+    "stitch_type",
+    "enable_stitch_fusion",
+    "elapsed_seconds"
+  ],
+  "title": "WorkerStitchResult",
+  "type": "object"
+}

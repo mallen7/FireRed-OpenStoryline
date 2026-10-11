@@ -1,0 +1,59 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "1.0",
+      "pattern": "^1\\.0$",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "center_seconds": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Center Seconds"
+    },
+    "duration_seconds": {
+      "default": 4.0,
+      "maximum": 60.0,
+      "minimum": 0.25,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "max_dimension": {
+      "default": 640,
+      "maximum": 1920,
+      "minimum": 160,
+      "title": "Max Dimension",
+      "type": "integer"
+    },
+    "sample_interval_seconds": {
+      "anyOf": [
+        {
+          "maximum": 5.0,
+          "minimum": 0.05,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sample Interval Seconds"
+    },
+    "use_cache": {
+      "default": true,
+      "title": "Use Cache",
+      "type": "boolean"
+    }
+  },
+  "title": "SphericalUiPreviewRequest",
+  "type": "object"
+}

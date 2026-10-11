@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "maximum_pan_speed_degrees_per_second": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Pan Speed Degrees Per Second",
+      "type": "number"
+    },
+    "maximum_acceleration_degrees_per_second_squared": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Acceleration Degrees Per Second Squared",
+      "type": "number"
+    },
+    "minimum_shot_duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Minimum Shot Duration Seconds",
+      "type": "number"
+    },
+    "maximum_shot_duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Shot Duration Seconds",
+      "type": "number"
+    },
+    "minimum_time_between_cuts_seconds": {
+      "minimum": 0,
+      "title": "Minimum Time Between Cuts Seconds",
+      "type": "number"
+    },
+    "maximum_fov_change_degrees_per_second": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Fov Change Degrees Per Second",
+      "type": "number"
+    },
+    "subject_dead_zone_degrees": {
+      "minimum": 0,
+      "title": "Subject Dead Zone Degrees",
+      "type": "number"
+    },
+    "maximum_low_confidence_tracking_seconds": {
+      "minimum": 0,
+      "title": "Maximum Low Confidence Tracking Seconds",
+      "type": "number"
+    }
+  },
+  "required": [
+    "maximum_pan_speed_degrees_per_second",
+    "maximum_acceleration_degrees_per_second_squared",
+    "minimum_shot_duration_seconds",
+    "maximum_shot_duration_seconds",
+    "minimum_time_between_cuts_seconds",
+    "maximum_fov_change_degrees_per_second",
+    "subject_dead_zone_degrees",
+    "maximum_low_confidence_tracking_seconds"
+  ],
+  "title": "MotionConstraints",
+  "type": "object"
+}

@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "Easing": {
+      "enum": [
+        "linear",
+        "smoothstep",
+        "ease_in",
+        "ease_out",
+        "ease_in_out"
+      ],
+      "title": "Easing",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "time_seconds": {
+      "minimum": 0,
+      "title": "Time Seconds",
+      "type": "number"
+    },
+    "yaw": {
+      "default": 0.0,
+      "title": "Yaw",
+      "type": "number"
+    },
+    "pitch": {
+      "default": 0.0,
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Pitch",
+      "type": "number"
+    },
+    "roll": {
+      "default": 0.0,
+      "title": "Roll",
+      "type": "number"
+    },
+    "horizontal_fov": {
+      "default": 90.0,
+      "exclusiveMaximum": 179.0,
+      "exclusiveMinimum": 1.0,
+      "title": "Horizontal Fov",
+      "type": "number"
+    },
+    "easing": {
+      "$ref": "#/$defs/Easing",
+      "default": "linear"
+    },
+    "subject_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Id"
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confidence"
+    }
+  },
+  "required": [
+    "time_seconds"
+  ],
+  "title": "CameraKeyframe",
+  "type": "object"
+}

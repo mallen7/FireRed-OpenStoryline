@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "TimelineReferenceKind": {
+      "enum": [
+        "flat_source",
+        "spherical_approved_track",
+        "generated_reframe_artifact"
+      ],
+      "title": "TimelineReferenceKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Version of this JSON contract.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/TimelineReferenceKind"
+    },
+    "flat_path": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Flat Path"
+    },
+    "spherical_asset_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Spherical Asset Id"
+    },
+    "approved_camera_track_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approved Camera Track Id"
+    },
+    "generated_reframe_path": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Generated Reframe Path"
+    },
+    "render_manifest_path": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Render Manifest Path"
+    },
+    "render_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Render Hash"
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "title": "TimelineSourceReference",
+  "type": "object"
+}

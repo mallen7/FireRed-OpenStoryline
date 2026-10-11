@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="/static/style.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+  <script defer src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
 </head>
 
 <body class="sidebar-collapsed devbar-collapsed">
@@ -408,6 +409,11 @@
           </svg>
         </button>
 
+        <button id="sphericalWorkspaceBtn" class="spherical-launch-btn" type="button"
+                title="Open 360° editor" aria-label="Open 360 degree editor">
+          <span aria-hidden="true">360°</span>
+        </button>
+
         <div class="composer-actions-spacer"></div>
 
         <button
@@ -438,6 +444,115 @@
         <div class="modal-content" id="modalContent"></div>
       </div>
     </div>
+
+    <!-- Session-scoped 360 editor. All mutations use the same versioned camera-track
+         schemas and artifact events as the spherical MCP tools. -->
+    <section id="sphericalWorkspace" class="spherical-workspace hidden"
+             aria-hidden="true" aria-label="360 degree editor workspace">
+      <header class="spherical-workspace-header">
+        <div>
+          <div class="spherical-eyebrow">OPENSTORYLINE · SPHERICAL</div>
+          <h2>360° virtual camera</h2>
+        </div>
+        <div class="spherical-header-actions">
+          <span id="sphericalSaveState" class="spherical-save-state">Ready</span>
+          <button id="sphericalRefreshBtn" class="spherical-button subtle" type="button">Refresh</button>
+          <button id="sphericalCloseBtn" class="spherical-close" type="button" aria-label="Close 360 editor">×</button>
+        </div>
+      </header>
+
+      <div id="sphericalLoading" class="spherical-notice">Loading spherical session…</div>
+      <div id="sphericalError" class="spherical-notice error hidden" role="alert"></div>
+      <div id="sphericalDisabled" class="spherical-notice warning hidden"></div>
+
+      <div id="sphericalWorkspaceBody" class="spherical-workspace-body hidden">
+        <aside class="spherical-panel spherical-browser-panel">
+          <label class="spherical-label" for="sphericalAssetSelect">Spherical asset</label>
+          <select id="sphericalAssetSelect" class="spherical-select"></select>
+          <div id="sphericalAssetDetails" class="spherical-asset-details"></div>
+
+          <div class="spherical-section-title">Camera tracks</div>
+          <div id="sphericalTrackList" class="spherical-track-list"></div>
+          <button id="sphericalNewTrackBtn" class="spherical-button primary wide" type="button">New manual track</button>
+
+          <div class="spherical-section-title">Worker</div>
+          <div id="sphericalWorkerStatus" class="spherical-worker-status"></div>
+          <div id="sphericalWarnings" class="spherical-warning-list"></div>
+        </aside>
+
+        <main class="spherical-stage-panel">
+          <div class="spherical-viewer-shell">
+            <div class="spherical-viewer-toolbar">
+              <span id="sphericalViewerBadge" class="spherical-badge">360° spherical</span>
+              <span id="sphericalViewerReadout">Yaw 0° · Pitch 0° · FOV 90°</span>
+            </div>
+            <div id="sphericalViewer" class="spherical-viewer">
+              <a-scene id="sphericalScene" embedded vr-mode-ui="enabled: false"
+                       loading-screen="enabled: false" renderer="antialias: true; colorManagement: true">
+                <a-assets timeout="8000">
+                  <video id="sphericalSourceVideo" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video>
+                </a-assets>
+                <a-videosphere id="sphericalVideoSphere" src="#sphericalSourceVideo" rotation="0 -90 0"></a-videosphere>
+                <a-entity id="sphericalCameraRig" rotation="0 0 0">
+                  <a-camera id="sphericalCamera" look-controls="enabled: true" wasd-controls="enabled: false" fov="90"></a-camera>
+                </a-entity>
+              </a-scene>
+              <video id="sphericalFallbackVideo" class="spherical-fallback-video hidden" controls playsinline></video>
+              <div id="sphericalViewerEmpty" class="spherical-viewer-empty">Import a stitched 2:1 MP4 through chat to begin.</div>
+            </div>
+            <div class="spherical-scrubber">
+              <button id="sphericalPlayBtn" class="spherical-icon-control" type="button" aria-label="Play or pause">▶</button>
+              <input id="sphericalTimeSlider" type="range" min="0" max="1" step="0.01" value="0" aria-label="Source time">
+              <output id="sphericalTimeReadout">00:00.00 / 00:00.00</output>
+            </div>
+          </div>
+
+          <section id="sphericalEditor" class="spherical-editor hidden">
+            <div class="spherical-editor-toolbar">
+              <input id="sphericalTrackName" class="spherical-input track-name" aria-label="Track name" value="Manual camera">
+              <select id="sphericalAspect" class="spherical-select compact" aria-label="Output aspect ratio">
+                <option value="1920x1080">16:9 · 1920×1080</option>
+                <option value="1080x1920">9:16 · 1080×1920</option>
+                <option value="1080x1080">1:1 · 1080×1080</option>
+              </select>
+              <button id="sphericalUndoBtn" class="spherical-button subtle" type="button">Undo</button>
+              <button id="sphericalRedoBtn" class="spherical-button subtle" type="button">Redo</button>
+              <button id="sphericalSaveBtn" class="spherical-button primary" type="button">Save track</button>
+            </div>
+
+            <div class="spherical-keyframe-controls">
+              <button id="sphericalAddKeyframeBtn" class="spherical-button" type="button">+ Add at playhead</button>
+              <button id="sphericalDeleteKeyframeBtn" class="spherical-button danger" type="button">Delete selected</button>
+              <span id="sphericalSelectionHint" class="spherical-muted">Select a keyframe to edit it.</span>
+            </div>
+            <div class="spherical-keyframe-table-wrap">
+              <table class="spherical-keyframe-table">
+                <thead><tr><th>Time</th><th>Yaw</th><th>Pitch</th><th>Roll</th><th>FOV</th><th>Easing</th><th>Subject</th><th>Confidence</th></tr></thead>
+                <tbody id="sphericalKeyframeRows"></tbody>
+              </table>
+            </div>
+
+            <div class="spherical-render-bar">
+              <label>Preview seconds <input id="sphericalPreviewDuration" class="spherical-number" type="number" min="0.25" max="60" step="0.25" value="4"></label>
+              <button id="sphericalPreviewBtn" class="spherical-button" type="button">Preview around playhead</button>
+              <button id="sphericalRenderBtn" class="spherical-button primary" type="button">Render flat MP4</button>
+            </div>
+            <div id="sphericalRenderResult" class="spherical-render-result hidden"></div>
+          </section>
+        </main>
+
+        <aside class="spherical-panel spherical-insights-panel">
+          <div class="spherical-tabs" role="tablist" aria-label="Spherical insights">
+            <button class="active" data-spherical-tab="suggestions" type="button">Suggestions</button>
+            <button data-spherical-tab="subjects" type="button">Subjects</button>
+            <button data-spherical-tab="renders" type="button">Renders</button>
+          </div>
+          <div id="sphericalSuggestionsPanel" class="spherical-tab-panel"></div>
+          <div id="sphericalSubjectsPanel" class="spherical-tab-panel hidden"></div>
+          <div id="sphericalRendersPanel" class="spherical-tab-panel hidden"></div>
+        </aside>
+      </div>
+    </section>
     <!-- Tool UI 配置：必须在 app.js 之前 -->
     <script>
       window.OPENSTORYLINE_TOOL_UI = {

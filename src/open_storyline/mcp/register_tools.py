@@ -30,6 +30,10 @@ def create_tool_wrapper(node: BaseNode, input_schema: type[BaseModel]):
         request = mcp_ctx.request_context.request
         headers = request.headers
         session_id = headers.get('X-Storyline-Session-Id')
+        if not session_id:
+            raise ValueError(
+                "X-Storyline-Session-Id is required for artifact isolation"
+            )
         
         # 2. Session lifecycle management
         session_manager = mcp_ctx.request_context.lifespan_context
@@ -41,6 +45,17 @@ def create_tool_wrapper(node: BaseNode, input_schema: type[BaseModel]):
         req_json = await request.json()
         params = kwargs.copy()
         params.update(req_json.get('params', {}).get('arguments', {}))
+        # The OpenStoryline agent interceptor supplies artifact_id and persists
+        # the result on the client side. A direct MCP client sees only the public
+        # node schema, so provide equivalent server-side behavior when that
+        # internal field is absent.
+        persist_on_server = not params.get('artifact_id')
+        server_store = None
+        if persist_on_server:
+            if not hasattr(session_manager, 'get_artifact_store'):
+                raise RuntimeError("MCP session artifact storage is unavailable")
+            server_store = session_manager.get_artifact_store(session_id)
+            params['artifact_id'] = server_store.generate_artifact_id(meta.node_id)
 
         node_state = NodeState(
             session_id=session_id,
@@ -51,6 +66,8 @@ def create_tool_wrapper(node: BaseNode, input_schema: type[BaseModel]):
             mcp_ctx=mcp_ctx,
         )
         result = await node(node_state, **params)
+        if persist_on_server and not result['isError']:
+            server_store.save_result(session_id, meta.node_id, result)
         return result
 
 
@@ -97,6 +114,13 @@ def register(server: FastMCP, cfg: Settings) -> None:
     all_node_classes = [NODE_REGISTRY.get(name=node_name) for node_name in cfg.local_mcp_server.available_nodes]
 
     for NodeClass in all_node_classes:
+        if NodeClass is None:
+            raise ValueError("Configured MCP node class was not found in NODE_REGISTRY")
+        if (
+            NodeClass.meta.node_kind.startswith("spherical_")
+            and not cfg.spherical.enabled
+        ):
+            continue
         node_instance = NodeClass(cfg)
         input_schema = node_instance.input_schema
 

@@ -1,0 +1,105 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "1.0",
+      "pattern": "^1\\.0$",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "artifact_id": {
+      "minLength": 1,
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "track_id": {
+      "minLength": 1,
+      "title": "Track Id",
+      "type": "string"
+    },
+    "track_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Track Revision",
+      "type": "integer"
+    },
+    "render_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Render Key",
+      "type": "string"
+    },
+    "output_path": {
+      "format": "path",
+      "title": "Output Path",
+      "type": "string"
+    },
+    "output_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Output Hash",
+      "type": "string"
+    },
+    "output_width": {
+      "exclusiveMinimum": 0,
+      "title": "Output Width",
+      "type": "integer"
+    },
+    "output_height": {
+      "exclusiveMinimum": 0,
+      "title": "Output Height",
+      "type": "integer"
+    },
+    "output_fps": {
+      "exclusiveMinimum": 0,
+      "title": "Output Fps",
+      "type": "number"
+    },
+    "render_duration_seconds": {
+      "minimum": 0,
+      "title": "Render Duration Seconds",
+      "type": "number"
+    },
+    "selected_backend": {
+      "minLength": 1,
+      "title": "Selected Backend",
+      "type": "string"
+    },
+    "audio_preserved": {
+      "title": "Audio Preserved",
+      "type": "boolean"
+    },
+    "cache_hit": {
+      "title": "Cache Hit",
+      "type": "boolean"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "fallback_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fallback Decisions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "track_id",
+    "track_revision",
+    "render_key",
+    "output_path",
+    "output_hash",
+    "output_width",
+    "output_height",
+    "output_fps",
+    "render_duration_seconds",
+    "selected_backend",
+    "audio_preserved",
+    "cache_hit"
+  ],
+  "title": "SphericalUiRenderResponse",
+  "type": "object"
+}

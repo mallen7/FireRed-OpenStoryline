@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "WorkerJobEventKind": {
+      "enum": [
+        "accepted",
+        "idempotent_replay",
+        "running",
+        "progress",
+        "retrying",
+        "succeeded",
+        "failed",
+        "cancel_requested",
+        "cancelled",
+        "timed_out",
+        "recovered"
+      ],
+      "title": "WorkerJobEventKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "job_id": {
+      "format": "uuid",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "sequence": {
+      "minimum": 1,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "kind": {
+      "$ref": "#/$defs/WorkerJobEventKind"
+    },
+    "progress_percent": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Progress Percent",
+      "type": "integer"
+    },
+    "message": {
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": true,
+      "title": "Data",
+      "type": "object"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "job_id",
+    "sequence",
+    "kind",
+    "progress_percent",
+    "message"
+  ],
+  "title": "WorkerJobEvent",
+  "type": "object"
+}
