@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from open_storyline.config import load_settings
 from open_storyline.mcp.register_tools import create_tool_wrapper
@@ -60,11 +61,15 @@ class FakeRequest:
 class SphericalMCPRegistrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        disabled_cfg = load_settings("config.toml")
-        cls.disabled_server = create_server(disabled_cfg)
-        enabled_cfg = disabled_cfg.model_copy(deep=True)
-        enabled_cfg.spherical.enabled = True
-        cls.enabled_server = create_server(enabled_cfg)
+        with patch(
+            "open_storyline.nodes.core_nodes.split_shots.load_transnetv2_model_cached",
+            return_value=object(),
+        ):
+            disabled_cfg = load_settings("config.toml")
+            cls.disabled_server = create_server(disabled_cfg)
+            enabled_cfg = disabled_cfg.model_copy(deep=True)
+            enabled_cfg.spherical.enabled = True
+            cls.enabled_server = create_server(enabled_cfg)
 
     def test_disabled_default_preserves_existing_tool_surface(self) -> None:
         disabled_names = set(self.disabled_server._tool_manager._tools)
